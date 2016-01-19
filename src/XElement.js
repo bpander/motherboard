@@ -4,7 +4,7 @@ define(['./utils/StringUtil'], function (StringUtil) {
 
     function XElement () {}
 
-    var _registerCustomAttribute = function (element, attributeName, attributeDef) {
+    XElement.registerCustomAttribute = function (element, attributeName, attributeDef) {
         var prop = StringUtil.toCamelCase(attributeName);
         Object.defineProperty(element, prop, {
             get: function () {
@@ -17,6 +17,9 @@ define(['./utils/StringUtil'], function (StringUtil) {
                         return +attrValue; // `+` quickly casts to a number
 
                     case String:
+                        if (attrValue === null) {
+                            attrValue = attributeDef.default + '';
+                        }
                         return attrValue;
 
                     case Boolean:
@@ -33,6 +36,7 @@ define(['./utils/StringUtil'], function (StringUtil) {
                         break;
 
                     case String:
+                        this.setAttribute(attributeName, value);
                         break;
 
                     case Boolean:
@@ -59,7 +63,7 @@ define(['./utils/StringUtil'], function (StringUtil) {
             var attributeName;
             for (attributeName in this.customAttributes) {
                 if (this.customAttributes.hasOwnProperty(attributeName)) {
-                    _registerCustomAttribute(this, attributeName, this.customAttributes[attributeName]);
+                    XElement.registerCustomAttribute(this, attributeName, this.customAttributes[attributeName]);
                 }
             }
         },

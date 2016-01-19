@@ -12,6 +12,10 @@ define(['src/XElement'], function (XElement) {
                 'speed': {
                     type: Number,
                     default: 3000
+                },
+                'active-class': {
+                    type: String,
+                    default: 'active'
                 }
             }
 
