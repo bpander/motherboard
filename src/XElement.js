@@ -12,16 +12,6 @@ define(['./utils/StringUtil'], function (StringUtil) {
         selector: '',
 
 
-        createdCallback: function () {
-            var attributeName;
-            for (attributeName in this.customAttributes) {
-                if (this.customAttributes.hasOwnProperty(attributeName)) {
-                    XElement.registerCustomAttribute(this, attributeName, this.customAttributes[attributeName]);
-                }
-            }
-        },
-
-
         getComponent: function (T, tag) {
 
         },
@@ -54,11 +44,11 @@ define(['./utils/StringUtil'], function (StringUtil) {
     };
 
 
-    XElement.registerCustomAttribute = function (element, attributeName, attributeDef) {
+    XElement.registerCustomAttribute = function (prototype, attributeName, attributeDef) {
         var prop = StringUtil.toCamelCase(attributeName);
-        Object.defineProperty(element, prop, {
+        Object.defineProperty(prototype, prop, {
             get: function () {
-                var attrValue = element.getAttribute(attributeName);
+                var attrValue = this.getAttribute(attributeName);
                 switch (attributeDef.type) {
                     case Number:
                         if (attrValue === null || attrValue.trim() === '' || isNaN(+attrValue)) {
@@ -91,9 +81,9 @@ define(['./utils/StringUtil'], function (StringUtil) {
 
                     case Boolean:
                         if (!!value) { // `!!` quickly casts to a boolean
-                            element.setAttribute(attributeName, '');
+                            this.setAttribute(attributeName, '');
                         } else {
-                            element.removeAttribute(attributeName);
+                            this.removeAttribute(attributeName);
                         }
                         break;
                 }
@@ -103,9 +93,15 @@ define(['./utils/StringUtil'], function (StringUtil) {
 
 
     XElement.define = function (customTagName, definition) {
+        var attributeName;
         var prototype = Object.create(HTMLElement.prototype);
         Object.assign(prototype, XElement.mixin);
         Object.assign(prototype, definition(prototype));
+        for (attributeName in prototype.customAttributes) {
+            if (prototype.customAttributes.hasOwnProperty(attributeName)) {
+                XElement.registerCustomAttribute(prototype, attributeName, prototype.customAttributes[attributeName]);
+            }
+        }
         return document.registerElement(customTagName, { prototype: prototype });
     };
 
