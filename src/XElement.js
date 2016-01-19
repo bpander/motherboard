@@ -4,53 +4,6 @@ define(['./utils/StringUtil'], function (StringUtil) {
 
     function XElement () {}
 
-    XElement.registerCustomAttribute = function (element, attributeName, attributeDef) {
-        var prop = StringUtil.toCamelCase(attributeName);
-        Object.defineProperty(element, prop, {
-            get: function () {
-                var attrValue = element.getAttribute(attributeName);
-                switch (attributeDef.type) {
-                    case Number:
-                        if (attrValue === null || attrValue.trim() === '' || isNaN(+attrValue)) {
-                            attrValue = attributeDef.default;
-                        }
-                        return +attrValue; // `+` quickly casts to a number
-
-                    case String:
-                        if (attrValue === null) {
-                            attrValue = attributeDef.default + '';
-                        }
-                        return attrValue;
-
-                    case Boolean:
-                        return attrValue !== null;
-                }
-            },
-            set: function (value) {
-                switch (attributeDef.type) {
-                    case Number:
-                        if (isNaN(+value) ) {
-                            break;
-                        }
-                        this.setAttribute(attributeName, value);
-                        break;
-
-                    case String:
-                        this.setAttribute(attributeName, value);
-                        break;
-
-                    case Boolean:
-                        if (!!value) { // `!!` quickly casts to a boolean
-                            element.setAttribute(attributeName, '');
-                        } else {
-                            element.removeAttribute(attributeName);
-                        }
-                        break;
-                }
-            }
-        });
-    };
-
 
     XElement.mixin = {
 
@@ -98,6 +51,54 @@ define(['./utils/StringUtil'], function (StringUtil) {
 
         }
 
+    };
+
+
+    XElement.registerCustomAttribute = function (element, attributeName, attributeDef) {
+        var prop = StringUtil.toCamelCase(attributeName);
+        Object.defineProperty(element, prop, {
+            get: function () {
+                var attrValue = element.getAttribute(attributeName);
+                switch (attributeDef.type) {
+                    case Number:
+                        if (attrValue === null || attrValue.trim() === '' || isNaN(+attrValue)) {
+                            attrValue = attributeDef.default;
+                        }
+                        return +attrValue; // `+` quickly casts to a number
+
+                    case String:
+                        if (attrValue === null) {
+                            attrValue = attributeDef.default + '';
+                        }
+                        return attrValue;
+
+                    case Boolean:
+                        return attrValue !== null;
+                }
+            },
+            set: function (value) {
+                switch (attributeDef.type) {
+                    case Number:
+                        if (isNaN(+value) ) {
+                            break;
+                        }
+                        this.setAttribute(attributeName, value);
+                        break;
+
+                    case String:
+                        this.setAttribute(attributeName, value);
+                        break;
+
+                    case Boolean:
+                        if (!!value) { // `!!` quickly casts to a boolean
+                            element.setAttribute(attributeName, '');
+                        } else {
+                            element.removeAttribute(attributeName);
+                        }
+                        break;
+                }
+            }
+        });
     };
 
 

@@ -4,14 +4,16 @@
         <title>test</title>
     </head>
     <body>
-        
+
+        <x-carousel infinite speed="100">
+        </x-carousel>
 
 
         <script src="bower_components/requirejs/require.js"></script>
         <script>
             require(['XCarousel'], function (XCarousel) {
 
-                window.xcarousel = new XCarousel();
+                window.xcarousel = document.body.querySelector('x-carousel');
 
             });
         </script>
