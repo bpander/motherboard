@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+    <head>
+        <title>test</title>
+    </head>
+    <body>
+        
+
+
+        <script src="bower_components/requirejs/require.js"></script>
+        <script>
+            require.config({
+                baseUrl: 'src'
+            });
+            require(['XElement'], function (XElement) {
+
+                window.XCarousel = XElement.define('x-carousel', function (base) {
+
+                    var proto = {
+
+                        customAttributes: {
+                            infinite: { type: Boolean },
+                            speed: {
+                                type: Number,
+                                default: 3000
+                            }
+                        }
+
+                    };
+
+
+                    return proto;
+                });
+
+                window.xcarousel = new XCarousel();
+
+            });
+        </script>
+    </body>
+</html>
