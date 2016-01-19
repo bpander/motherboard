@@ -4,6 +4,38 @@ define(['./utils/StringUtil'], function (StringUtil) {
 
     function XElement () {}
 
+    var _registerCustomAttribute = function (element, attributeName, attributeDef) {
+        var prop = StringUtil.toCamelCase(attributeName);
+        Object.defineProperty(element, prop, {
+            get: function () {
+                var attrValue = element.getAttribute(attributeName);
+                switch (attributeDef.type) {
+                    case Number:
+                        return +attrValue; // `+` quickly casts to a number
+                    case String:
+                        return attrValue;
+                    case Boolean:
+                        return attrValue !== null;
+                }
+            },
+            set: function (value) {
+                switch (attributeDef.type) {
+                    case Number:
+                        break;
+                    case String:
+                        break;
+                    case Boolean:
+                        if (!!value) { // `!!` quickly casts to a boolean
+                            element.setAttribute(attributeName, '');
+                        } else {
+                            element.removeAttribute(attributeName);
+                        }
+                        break;
+                }
+            }
+        });
+    };
+
 
     XElement.mixin = {
 
@@ -13,29 +45,11 @@ define(['./utils/StringUtil'], function (StringUtil) {
 
 
         createdCallback: function () {
-            var attrName;
-            var attrDefinition;
-            var prop;
-            for (attrName in this.customAttributes) {
-                attrDefinition = this.customAttributes[attrName];
-                prop = StringUtil.toCamelCase(attrName);
-                // TODO: This need a closure otherwise attrDefinition will be whatever it was set to last
-                Object.defineProperty(this, prop, {
-                    get: function () {
-                        var attrValue = this.getAttribute(attrName);
-                        switch (attrDefinition.type) {
-                            case Number:
-                                return +attrValue;
-                            case String:
-                                return attrValue;
-                            case Boolean:
-                                return attrValue !== null;
-                        }
-                    },
-                    set: function (value) {
-
-                    }
-                });
+            var attributeName;
+            for (attributeName in this.customAttributes) {
+                if (this.customAttributes.hasOwnProperty(attributeName)) {
+                    _registerCustomAttribute(this, attributeName, this.customAttributes[attributeName]);
+                }
             }
         },
 
