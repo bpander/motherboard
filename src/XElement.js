@@ -11,9 +11,14 @@ define(['./utils/StringUtil'], function (StringUtil) {
                 var attrValue = element.getAttribute(attributeName);
                 switch (attributeDef.type) {
                     case Number:
+                        if (attrValue === null || attrValue.trim() === '' || isNaN(+attrValue)) {
+                            attrValue = attributeDef.default;
+                        }
                         return +attrValue; // `+` quickly casts to a number
+
                     case String:
                         return attrValue;
+
                     case Boolean:
                         return attrValue !== null;
                 }
@@ -21,9 +26,15 @@ define(['./utils/StringUtil'], function (StringUtil) {
             set: function (value) {
                 switch (attributeDef.type) {
                     case Number:
+                        if (isNaN(+value) ) {
+                            break;
+                        }
+                        this.setAttribute(attributeName, value);
                         break;
+
                     case String:
                         break;
+
                     case Boolean:
                         if (!!value) { // `!!` quickly casts to a boolean
                             element.setAttribute(attributeName, '');
