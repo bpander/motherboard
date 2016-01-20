@@ -94,14 +94,20 @@ define(['./utils/StringUtil'], function (StringUtil) {
 
     XElement.define = function (customTagName, definition) {
         var attributeName;
+
+        // Define prototype
         var prototype = Object.create(HTMLElement.prototype);
         Object.assign(prototype, XElement.mixin);
-        Object.assign(prototype, definition(prototype));
+        definition(prototype);
+
+        // Register custom attributes
         for (attributeName in prototype.customAttributes) {
             if (prototype.customAttributes.hasOwnProperty(attributeName)) {
                 XElement.registerCustomAttribute(prototype, attributeName, prototype.customAttributes[attributeName]);
             }
         }
+
+        // Register element
         return document.registerElement(customTagName, { prototype: prototype });
     };
 
