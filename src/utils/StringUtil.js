@@ -12,5 +12,12 @@ define(function () {
     };
 
 
+    StringUtil.capitalize = function (str) {
+        return str.replace(/./, function ($1) {
+            return $1.toUpperCase();
+        });
+    };
+
+
     return StringUtil;
 });
