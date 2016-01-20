@@ -10,7 +10,7 @@ define(['src/XElement'], function (XElement) {
             'slides-visible': {
                 type: Number,
                 responsive: true,
-                default: '1, (min-width: 768px) 3'
+                default: '(min-height: 100px) and (min-width: 768px) 3, 1'
             },
             'speed': {
                 type: Number,

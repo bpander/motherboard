@@ -50,11 +50,15 @@ define(['./utils/StringUtil'], function (StringUtil) {
             get: function () {
                 var attrValue = this.getAttribute(attributeName);
                 switch (attributeDef.type) {
+
                     case Number:
-                        if (attrValue === null || attrValue.trim() === '' || isNaN(+attrValue)) {
-                            attrValue = attributeDef.default;
+                        // If the attribute is responsive, fallthrough to the String case
+                        if (attributeDef.responsive !== true) {
+                            if (attrValue === null || attrValue.trim() === '' || isNaN(+attrValue)) {
+                                attrValue = attributeDef.default;
+                            }
+                            return +attrValue; // `+` quickly casts to a number
                         }
-                        return +attrValue; // `+` quickly casts to a number
 
                     case String:
                         if (attrValue === null) {
@@ -69,11 +73,14 @@ define(['./utils/StringUtil'], function (StringUtil) {
             set: function (value) {
                 switch (attributeDef.type) {
                     case Number:
-                        if (isNaN(+value) ) {
+                        // If the attribute is responsive, fallthrough to the String case
+                        if (attributeDef.responsive !== true) {
+                            if (isNaN(+value) ) {
+                                break;
+                            }
+                            this.setAttribute(attributeName, value);
                             break;
                         }
-                        this.setAttribute(attributeName, value);
-                        break;
 
                     case String:
                         this.setAttribute(attributeName, value);
@@ -89,6 +96,28 @@ define(['./utils/StringUtil'], function (StringUtil) {
                 }
             }
         });
+        if (attributeDef.responsive === true) {
+            Object.defineProperty(prototype, 'current' + StringUtil.capitalize(prop), {
+                get: function () {
+                    // property will be something like "(min-width: 768px) and (min-height: 100px) 3, 1"
+                    var definitions = this[prop].split(',').map(function (x) { return x.trim(); });
+                    var unmatched = definitions.pop();
+                    var matchedValue = definitions.reduce(function (previous, definition) {
+                        var parts = definition.split(/\s(?=[^\s]*$)/); // Find last occurence of whitespace and split at it
+                        var mediaQuery = parts[0];
+                        var value = parts[1];
+                        if (window.matchMedia(mediaQuery).matches) {
+                            return value;
+                        }
+                        return previous;
+                    }, unmatched);
+                    if (attributeDef.type === Number) {
+                        matchedValue = +matchedValue;
+                    }
+                    return matchedValue;
+                }
+            });
+        }
     };
 
 
