@@ -18,8 +18,17 @@ define(['src/XElement'], function (XElement) {
             },
             'active-class': {
                 type: String,
-                default: 'active'
+                default: 'active',
+                changedCallback: function (oldVal, newVal) {
+                    console.log('active-class changed', oldVal, newVal);
+                }
             }
+        };
+
+
+        proto.attributeChangedCallback = function () {
+            XElement.mixin.attributeChangedCallback.apply(this, arguments);
+            console.log('overwritten');
         };
 
 

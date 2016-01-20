@@ -12,8 +12,17 @@ define(['./utils/StringUtil'], function (StringUtil) {
         selector: '',
 
 
-        attributeChangedCallback: function () {
+        attributeChangedCallback: function (attrName, oldVal, newVal) {
+            var attrDef = this.customAttributes[attrName];
+            if (attrDef === undefined) {
+                return;
+            }
+            if (attrDef.responsive === true) {
 
+            }
+            if (attrDef.changedCallback !== undefined) {
+                attrDef.changedCallback.call(this, oldVal, newVal);
+            }
         },
 
 
