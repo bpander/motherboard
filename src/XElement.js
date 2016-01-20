@@ -13,7 +13,7 @@ define(['./utils/StringUtil'], function (StringUtil) {
 
 
         createdCallback: function () {
-            var mql = [];
+            this.mqDefs = [];
         },
 
 
@@ -176,20 +176,34 @@ define(['./utils/StringUtil'], function (StringUtil) {
 
     XElement.updateResponsiveAttribute = function (instance, attrName, attrDef) {
         console.log('updateResponsiveAttribute');
+        var mqDef;
+        var i = instance.mqDefs.length;
+
+        // Loop backwards because we're potetially going to remove items from the array
+        while ((mqDef = instance.mqDefs[--i]) !== undefined) {
+            if (mqDef.attribute !== attrName) {
+                continue;
+            }
+            mqDef.mql.removeListener(mqDef.mqlListner);
+            instance.mqDefs.splice(i, 1);
+        }
+        var mqDefs = instance.mqDefs.filter(function (mqDef) {
+            return mqDef.attribute === attrName;
+        });
         var prop = StringUtil.toCamelCase(attrName);
         var parsed = XElement.parseResponsiveAttribute(instance[prop], attrDef.type);
         var _private = parsed.unmatched;
-        parsed.breakpoints.map(function (breakpoint) {
+        parsed.breakpoints.forEach(function (breakpoint) {
             var mql = window.matchMedia(breakpoint.mediaQuery);
             var mqlListner = function () {
                 console.log(breakpoint.mediaQuery, mql.matches);
             };
             mql.addListener(mqlListner);
-            mqlListner();
-            return {
+            instance.mqDefs.push({
                 mql: mql,
-                mqlListner: mqlListner
-            };
+                mqlListner: mqlListner,
+                attribute: attrName
+            });
         });
     };
 
