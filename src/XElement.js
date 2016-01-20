@@ -12,6 +12,11 @@ define(['./utils/StringUtil'], function (StringUtil) {
         selector: '',
 
 
+        attributeChangedCallback: function () {
+
+        },
+
+
         getComponent: function (T, tag) {
 
         },
@@ -44,25 +49,25 @@ define(['./utils/StringUtil'], function (StringUtil) {
     };
 
 
-    XElement.registerCustomAttribute = function (prototype, attributeName, attributeDef) {
-        var prop = StringUtil.toCamelCase(attributeName);
+    XElement.registerCustomAttribute = function (prototype, attrName, attrDef) {
+        var prop = StringUtil.toCamelCase(attrName);
         Object.defineProperty(prototype, prop, {
             get: function () {
-                var attrValue = this.getAttribute(attributeName);
-                switch (attributeDef.type) {
+                var attrValue = this.getAttribute(attrName);
+                switch (attrDef.type) {
 
                     case Number:
                         // If the attribute is responsive, fallthrough to the String case
-                        if (attributeDef.responsive !== true) {
+                        if (attrDef.responsive !== true) {
                             if (attrValue === null || attrValue.trim() === '' || isNaN(+attrValue)) {
-                                attrValue = attributeDef.default;
+                                attrValue = attrDef.default;
                             }
                             return +attrValue; // `+` quickly casts to a number
                         }
 
                     case String:
                         if (attrValue === null) {
-                            attrValue = attributeDef.default + '';
+                            attrValue = attrDef.default + '';
                         }
                         return attrValue;
 
@@ -71,32 +76,32 @@ define(['./utils/StringUtil'], function (StringUtil) {
                 }
             },
             set: function (value) {
-                switch (attributeDef.type) {
+                switch (attrDef.type) {
                     case Number:
                         // If the attribute is responsive, fallthrough to the String case
-                        if (attributeDef.responsive !== true) {
+                        if (attrDef.responsive !== true) {
                             if (isNaN(+value) ) {
                                 break;
                             }
-                            this.setAttribute(attributeName, value);
+                            this.setAttribute(attrName, value);
                             break;
                         }
 
                     case String:
-                        this.setAttribute(attributeName, value);
+                        this.setAttribute(attrName, value);
                         break;
 
                     case Boolean:
                         if (!!value) { // `!!` quickly casts to a boolean
-                            this.setAttribute(attributeName, '');
+                            this.setAttribute(attrName, '');
                         } else {
-                            this.removeAttribute(attributeName);
+                            this.removeAttribute(attrName);
                         }
                         break;
                 }
             }
         });
-        if (attributeDef.responsive === true) {
+        if (attrDef.responsive === true) {
             Object.defineProperty(prototype, 'current' + StringUtil.capitalize(prop), {
                 get: function () {
                     // property will be something like "(min-width: 768px) and (min-height: 100px) 3, 1"
@@ -111,7 +116,7 @@ define(['./utils/StringUtil'], function (StringUtil) {
                         }
                         return previous;
                     }, unmatched);
-                    if (attributeDef.type === Number) {
+                    if (attrDef.type === Number) {
                         matchedValue = +matchedValue;
                     }
                     return matchedValue;
@@ -122,7 +127,7 @@ define(['./utils/StringUtil'], function (StringUtil) {
 
 
     XElement.define = function (customTagName, definition) {
-        var attributeName;
+        var attrName;
 
         // Define prototype
         var prototype = Object.create(HTMLElement.prototype);
@@ -130,9 +135,9 @@ define(['./utils/StringUtil'], function (StringUtil) {
         definition(prototype);
 
         // Register custom attributes
-        for (attributeName in prototype.customAttributes) {
-            if (prototype.customAttributes.hasOwnProperty(attributeName)) {
-                XElement.registerCustomAttribute(prototype, attributeName, prototype.customAttributes[attributeName]);
+        for (attrName in prototype.customAttributes) {
+            if (prototype.customAttributes.hasOwnProperty(attrName)) {
+                XElement.registerCustomAttribute(prototype, attrName, prototype.customAttributes[attrName]);
             }
         }
 
