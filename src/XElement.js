@@ -12,6 +12,30 @@ define(['./utils/StringUtil'], function (StringUtil) {
         selector: '',
 
 
+        createdCallback: function () {
+            var mql = [];
+        },
+
+
+        attachedCallback: function () {
+            var attrName;
+            var attrDef;
+            for (attrName in this.customAttributes) {
+                if (this.customAttributes.hasOwnProperty(attrName)) {
+                    attrDef = this.customAttributes[attrName];
+                    if (attrDef.responsive === true) {
+                        XElement.updateResponsiveAttribute(this, attrName, attrDef);
+                    }
+                }
+            }
+        },
+
+
+        detachedCallback: function () {
+
+        },
+
+
         attributeChangedCallback: function (attrName, oldVal, newVal) {
             var attrDef = this.customAttributes[attrName];
             if (attrDef === undefined) {
@@ -147,6 +171,26 @@ define(['./utils/StringUtil'], function (StringUtil) {
                 };
             })
         };
+    };
+
+
+    XElement.updateResponsiveAttribute = function (instance, attrName, attrDef) {
+        console.log('updateResponsiveAttribute');
+        var prop = StringUtil.toCamelCase(attrName);
+        var parsed = XElement.parseResponsiveAttribute(instance[prop], attrDef.type);
+        var _private = parsed.unmatched;
+        parsed.breakpoints.map(function (breakpoint) {
+            var mql = window.matchMedia(breakpoint.mediaQuery);
+            var mqlListner = function () {
+                console.log(breakpoint.mediaQuery, mql.matches);
+            };
+            mql.addListener(mqlListner);
+            mqlListner();
+            return {
+                mql: mql,
+                mqlListner: mqlListner
+            };
+        });
     };
 
 
