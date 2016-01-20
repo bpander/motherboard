@@ -95,8 +95,8 @@ define(['./utils/StringUtil'], function (StringUtil) {
     XElement.define = function (customTagName, definition) {
         var attributeName;
         var prototype = Object.create(HTMLElement.prototype);
-        prototype = Object.assign(prototype, XElement.mixin);
-        prototype = Object.assign({}, prototype, definition(prototype)); // It's necessary to create a new object so we can access "super" properties
+        Object.assign(prototype, XElement.mixin);
+        Object.assign(prototype, definition(prototype));
         for (attributeName in prototype.customAttributes) {
             if (prototype.customAttributes.hasOwnProperty(attributeName)) {
                 XElement.registerCustomAttribute(prototype, attributeName, prototype.customAttributes[attributeName]);
