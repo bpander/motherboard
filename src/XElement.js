@@ -113,25 +113,40 @@ define(['./utils/StringUtil'], function (StringUtil) {
         if (attrDef.responsive === true) {
             Object.defineProperty(prototype, 'current' + StringUtil.capitalize(prop), {
                 get: function () {
-                    // property will be something like "(min-width: 768px) and (min-height: 100px) 3, 1"
-                    var definitions = this[prop].split(',').map(function (x) { return x.trim(); });
-                    var unmatched = definitions.pop();
-                    var matchedValue = definitions.reduce(function (previous, definition) {
-                        var parts = definition.split(/\s(?=[^\s]*$)/); // Find last occurence of whitespace and split at it
-                        var mediaQuery = parts[0];
-                        var value = parts[1];
-                        if (window.matchMedia(mediaQuery).matches) {
-                            return value;
+                    var parsed = XElement.parseResponsiveAttribute(this[prop], attrDef.type);
+                    return parsed.breakpoints.reduce(function (previous, breakpoint) {
+                        if (window.matchMedia(breakpoint.mediaQuery).matches) {
+                            return breakpoint.value;
                         }
                         return previous;
-                    }, unmatched);
-                    if (attrDef.type === Number) {
-                        matchedValue = +matchedValue;
-                    }
-                    return matchedValue;
+                    }, parsed.unmatched);
                 }
             });
         }
+    };
+
+
+    XElement.parseResponsiveAttribute = function (value, type) {
+        var definitions = value.split(',').map(function (x) { return x.trim(); });
+        var unmatched = definitions.pop();
+        if (type === Number) {
+            unmatched = +unmatched;
+        }
+        return {
+            unmatched: unmatched,
+            breakpoints: definitions.map(function (definition) {
+                var parts = definition.split(/\s(?=[^\s]*$)/); // Find last occurence of whitespace and split at it
+                var mediaQuery = parts[0];
+                var value = parts[1];
+                if (type === Number) {
+                    value = +value;
+                }
+                return {
+                    mediaQuery: mediaQuery,
+                    value: value
+                };
+            })
+        };
     };
 
 
