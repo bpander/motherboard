@@ -16,8 +16,6 @@ define([
 
         customAttributes: {},
 
-        selector: '',
-
 
         createdCallback: function () {
             this.mqDefs = [];
@@ -77,22 +75,30 @@ define([
 
 
         getComponent: function (T, tag) {
-
+            var selector = T.prototype.selector;
+            if (tag !== undefined) {
+                selector += '[data-tag="' + tag + '"]';
+            }
+            return this.querySelector(selector);
         },
 
 
         getComponents: function (T, tag) {
-
+            var selector = T.prototype.selector;
+            if (tag !== undefined) {
+                selector += '[data-tag="' + tag + '"]';
+            }
+            return this.querySelectorAll(selector);
         },
 
 
         findWithTag: function (tag) {
-
+            return this.querySelector('[data-tag="' + tag + '"]');
         },
 
 
         findAllWithTag: function (tag) {
-
+            return this.querySelectorAll('[data-tag="' + tag + '"]');
         },
 
 
@@ -257,6 +263,7 @@ define([
         // Define prototype
         var prototype = Object.create(HTMLElement.prototype);
         Object.assign(prototype, XElement.mixin);
+        Object.defineProperty(prototype, 'selector', { value: customTagName });
         definition(prototype);
 
         // Register custom attributes

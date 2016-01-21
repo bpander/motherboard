@@ -5,8 +5,12 @@
     </head>
     <body>
 
-        <x-carousel infinite speed="100">
-        </x-carousel>
+        <x-compound>
+            <x-carousel infinite speed="100"></x-carousel>
+            <x-carousel infinite speed="100" data-tag="foo"></x-carousel>
+            <x-carousel infinite speed="100"></x-carousel>
+            <x-carousel infinite speed="100" data-tag="foo"></x-carousel>
+        </x-compound>
 
 
         <script src="bower_components/requirejs/require.js"></script>
@@ -18,8 +22,9 @@
                     }
                 }
             });
-            require(['XCarousel'], function (XCarousel) {
+            require(['XCarousel', 'XCompound'], function (XCarousel, XCompound) {
 
+                window.xcompound = document.body.querySelector('x-compound');
                 window.xcarousel = document.body.querySelector('x-carousel');
 
             });
