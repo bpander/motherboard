@@ -335,7 +335,31 @@ define([
 
 
     var _extendCustom = function (T, customTagName, definition) {
+        var options = {};
+        var selector;
+        var selectorParts = T.prototype.selector.split('[');
+        var extendsNative = selectorParts.length > 1;
+        if (extendsNative) {
+            options.extends = selectorParts[0];
+            selector = selectorParts[0] + '[is="' + customTagName + '"]';
+        } else {
+            selector = customTagName;
+        }
+        var base = T.prototype;
+        var prototype = Object.create(base);
+        Object.defineProperty(prototype, 'selector', { value: selector });
+        definition(prototype, XElement.mixin, base);
 
+        // Register custom attributes
+        var attrName;
+        for (attrName in prototype.customAttributes) {
+            if (prototype.customAttributes.hasOwnProperty(attrName)) {
+                XElement.registerCustomAttribute(prototype, attrName, prototype.customAttributes[attrName]);
+            }
+        }
+
+        options.prototype = prototype;
+        return document.registerElement(customTagName, options);
     };
 
 

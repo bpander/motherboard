@@ -6,6 +6,10 @@ define(['src/XElement'], function (XElement) {
         proto.createdCallback = function () {
             mixin.createdCallback.call(this);
             console.log('x-form createdCallback');
+            this.createBinding(this, 'click', function () {
+                console.log('click', this);
+            });
+            this.enable();
         };
 
 
