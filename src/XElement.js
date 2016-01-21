@@ -220,6 +220,9 @@ define(['./utils/StringUtil'], function (StringUtil) {
         var oldVal = parsed.unmatched;
         parsed.breakpoints.forEach(function (breakpoint) {
             var mql = window.matchMedia(breakpoint.mediaQuery);
+            if (mql.matches) {
+                oldVal = breakpoint.value;
+            }
             var mqlListner = function () {
                 var currentProp = 'current' + StringUtil.capitalize(prop);
                 var newVal = instance[currentProp];
