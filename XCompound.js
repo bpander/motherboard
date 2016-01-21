@@ -1,10 +1,10 @@
 define(['src/XElement', 'XCarousel'], function (XElement, XCarousel) {
     'use strict';
 
-    return XElement.define('x-compound', function (proto) {
+    return XElement.define('x-compound', function (proto, mixin, base) {
 
         proto.createdCallback = function () {
-            XElement.mixin.createdCallback.call(this);
+            mixin.createdCallback.call(this);
             var carousels = this.getComponents(XCarousel, 'foo');
             this.createBinding(carousels, 'click', function (e) {
                 console.log('click', e);

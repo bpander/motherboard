@@ -286,10 +286,11 @@ define([
         var attrName;
 
         // Define prototype
-        var prototype = Object.create(HTMLElement.prototype);
+        var base = HTMLElement.prototype;
+        var prototype = Object.create(base);
         Object.assign(prototype, XElement.mixin);
         Object.defineProperty(prototype, 'selector', { value: customTagName });
-        definition(prototype);
+        definition(prototype, XElement.mixin, base);
 
         // Register custom attributes
         for (attrName in prototype.customAttributes) {
@@ -304,7 +305,7 @@ define([
 
 
     XElement.extend = function () {
-        if (typeof argument[0] === 'string') {
+        if (typeof arguments[0] === 'string') {
             return _extendNative.apply(this, arguments);
         }
         return _extendCustom.apply(this, arguments);
@@ -312,7 +313,24 @@ define([
 
 
     var _extendNative = function (tagName, customTagName, definition) {
+        var attrName;
 
+        // Define prototype
+        var base = document.createElement(tagName).constructor.prototype;
+        var prototype = Object.create(base);
+        Object.assign(prototype, XElement.mixin);
+        Object.defineProperty(prototype, 'selector', { value: tagName + '[is="' + customTagName + '"]' });
+        definition(prototype, XElement.mixin, base);
+
+        // Register custom attributes
+        for (attrName in prototype.customAttributes) {
+            if (prototype.customAttributes.hasOwnProperty(attrName)) {
+                XElement.registerCustomAttribute(prototype, attrName, prototype.customAttributes[attrName]);
+            }
+        }
+
+        // Register element
+        return document.registerElement(customTagName, { prototype: prototype, extends: tagName });
     };
 
 

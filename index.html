@@ -12,6 +12,10 @@
             <x-carousel infinite speed="100" data-tag="foo">foo</x-carousel>
         </x-compound>
 
+        <form is="x-form">
+            x-form
+        </form>
+
 
         <script src="bower_components/requirejs/require.js"></script>
         <script>
@@ -22,7 +26,7 @@
                     }
                 }
             });
-            require(['XCarousel', 'XCompound'], function (XCarousel, XCompound) {
+            require(['XCarousel', 'XCompound', 'XForm'], function (XCarousel, XCompound) {
 
                 window.xcompound = document.body.querySelector('x-compound');
                 window.xcarousel = document.body.querySelector('x-carousel');
