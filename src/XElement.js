@@ -32,7 +32,16 @@ define(['./utils/StringUtil'], function (StringUtil) {
 
 
         detachedCallback: function () {
-
+            var attrName;
+            var attrDef;
+            for (attrName in this.customAttributes) {
+                if (this.customAttributes.hasOwnProperty(attrName)) {
+                    attrDef = this.customAttributes[attrName];
+                    if (attrDef.responsive === true) {
+                        XElement.removeAttributeMqDefinitions(this, attrName);
+                    }
+                }
+            }
         },
 
 
@@ -42,7 +51,7 @@ define(['./utils/StringUtil'], function (StringUtil) {
                 return;
             }
             if (attrDef.responsive === true) {
-
+                XElement.updateResponsiveAttribute(this, attrName, attrDef);
             }
             if (attrDef.changedCallback !== undefined) {
                 attrDef.changedCallback.call(this, oldVal, newVal);
@@ -174,8 +183,7 @@ define(['./utils/StringUtil'], function (StringUtil) {
     };
 
 
-    XElement.updateResponsiveAttribute = function (instance, attrName, attrDef) {
-        console.log('updateResponsiveAttribute');
+    XElement.removeAttributeMqDefinitions = function (instance, attrName) {
         var mqDef;
         var i = instance.mqDefs.length;
 
@@ -187,9 +195,11 @@ define(['./utils/StringUtil'], function (StringUtil) {
             mqDef.mql.removeListener(mqDef.mqlListner);
             instance.mqDefs.splice(i, 1);
         }
-        var mqDefs = instance.mqDefs.filter(function (mqDef) {
-            return mqDef.attribute === attrName;
-        });
+    };
+
+
+    XElement.updateResponsiveAttribute = function (instance, attrName, attrDef) {
+        XElement.removeAttributeMqDefinitions(instance, attrName);
         var prop = StringUtil.toCamelCase(attrName);
         var parsed = XElement.parseResponsiveAttribute(instance[prop], attrDef.type);
         var _private = parsed.unmatched;
