@@ -1,11 +1,15 @@
 define([
     './utils/StringUtil',
+    './Binding',
     './polyfills/CustomEvent',
     './polyfills/Object.assign',
     '../bower_components/webcomponentsjs/webcomponents-lite.js',
     '../bower_components/matchMedia/matchMedia',
     '../bower_components/matchMedia/matchMedia.addListener'
-], function (StringUtil) {
+], function (
+    StringUtil,
+    Binding
+) {
     'use strict';
 
 
@@ -18,6 +22,7 @@ define([
 
 
         createdCallback: function () {
+            this.bindings = [];
             this.mqDefs = [];
         },
 
@@ -103,7 +108,27 @@ define([
 
 
         createBinding: function (target, type, handler) {
+            var binding = new Binding(target, type, handler);
+            this.bindings.push(binding);
+            return binding;
+        },
 
+
+        enable: function () {
+            var i;
+            var l = this.bindings.length;
+            for (i = 0; i < l; i++) {
+                this.bindings[i].enable();
+            }
+        },
+
+
+        disable: function () {
+            var i;
+            var l = this.bindings.length;
+            for (i = 0; i < l; i++) {
+                this.bindings[i].disable();
+            }
         },
 
 
