@@ -94,8 +94,9 @@ define(['./utils/StringUtil'], function (StringUtil) {
         },
 
 
-        trigger: function (type, data) {
-
+        trigger: function (type, detail) {
+            var e = new CustomEvent(type, { detail: detail });
+            return this.dispatchEvent(e);
         }
 
     };
