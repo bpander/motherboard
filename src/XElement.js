@@ -283,24 +283,12 @@ define([
 
 
     XElement.define = function (customTagName, definition) {
-        var attrName;
-
-        // Define prototype
         var base = HTMLElement.prototype;
         var prototype = Object.create(base);
         Object.assign(prototype, XElement.mixin);
         Object.defineProperty(prototype, 'selector', { value: customTagName });
         definition(prototype, XElement.mixin, base);
-
-        // Register custom attributes
-        for (attrName in prototype.customAttributes) {
-            if (prototype.customAttributes.hasOwnProperty(attrName)) {
-                XElement.registerCustomAttribute(prototype, attrName, prototype.customAttributes[attrName]);
-            }
-        }
-
-        // Register element
-        return document.registerElement(customTagName, { prototype: prototype });
+        return _register(customTagName, { prototype: prototype });
     };
 
 
@@ -313,24 +301,13 @@ define([
 
 
     var _extendNative = function (tagName, customTagName, definition) {
-        var attrName;
-
-        // Define prototype
         var base = document.createElement(tagName).constructor.prototype;
         var prototype = Object.create(base);
         Object.assign(prototype, XElement.mixin);
         Object.defineProperty(prototype, 'selector', { value: tagName + '[is="' + customTagName + '"]' });
         definition(prototype, XElement.mixin, base);
 
-        // Register custom attributes
-        for (attrName in prototype.customAttributes) {
-            if (prototype.customAttributes.hasOwnProperty(attrName)) {
-                XElement.registerCustomAttribute(prototype, attrName, prototype.customAttributes[attrName]);
-            }
-        }
-
-        // Register element
-        return document.registerElement(customTagName, { prototype: prototype, extends: tagName });
+        return _register(customTagName, { prototype: prototype, extends: tagName });
     };
 
 
@@ -341,7 +318,7 @@ define([
         var extendsNative = selectorParts.length > 1;
         if (extendsNative) {
             options.extends = selectorParts[0];
-            selector = selectorParts[0] + '[is="' + customTagName + '"]';
+            selector = options.extends + '[is="' + customTagName + '"]';
         } else {
             selector = customTagName;
         }
@@ -350,7 +327,15 @@ define([
         Object.defineProperty(prototype, 'selector', { value: selector });
         definition(prototype, XElement.mixin, base);
 
+        options.prototype = prototype;
+        return _register(customTagName, options);
+    };
+
+
+    var _register = function (customTagName, options) {
+
         // Register custom attributes
+        var prototype = options.prototype;
         var attrName;
         for (attrName in prototype.customAttributes) {
             if (prototype.customAttributes.hasOwnProperty(attrName)) {
@@ -358,7 +343,7 @@ define([
             }
         }
 
-        options.prototype = prototype;
+        // Register the custom element
         return document.registerElement(customTagName, options);
     };
 
