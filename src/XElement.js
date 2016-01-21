@@ -202,11 +202,18 @@ define(['./utils/StringUtil'], function (StringUtil) {
         XElement.removeAttributeMqDefinitions(instance, attrName);
         var prop = StringUtil.toCamelCase(attrName);
         var parsed = XElement.parseResponsiveAttribute(instance[prop], attrDef.type);
-        var _private = parsed.unmatched;
+        var oldVal = parsed.unmatched;
         parsed.breakpoints.forEach(function (breakpoint) {
             var mql = window.matchMedia(breakpoint.mediaQuery);
             var mqlListner = function () {
-                console.log(breakpoint.mediaQuery, mql.matches);
+                var currentProp = 'current' + StringUtil.capitalize(prop);
+                var newVal = instance[currentProp];
+                if (newVal !== oldVal) {
+                    if (attrDef.mediaChangedCallback instanceof Function) {
+                        attrDef.mediaChangedCallback.call(instance, oldVal, newVal);
+                    }
+                    oldVal = newVal;
+                }
             };
             mql.addListener(mqlListner);
             instance.mqDefs.push({
