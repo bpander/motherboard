@@ -11,6 +11,13 @@
 
         <script src="bower_components/requirejs/require.js"></script>
         <script>
+            require.config({
+                shim: {
+                    '../bower_components/matchMedia/matchMedia.addListener': {
+                        deps: ['../bower_components/matchMedia/matchMedia']
+                    }
+                }
+            });
             require(['XCarousel'], function (XCarousel) {
 
                 window.xcarousel = document.body.querySelector('x-carousel');

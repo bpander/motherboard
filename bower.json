@@ -1,0 +1,25 @@
+{
+  "name": "xelement",
+  "homepage": "https://github.com/banderso-n/xelement",
+  "authors": [
+    "Brad Anderson <banderso@nerdery.com>"
+  ],
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "license": "BSD",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "requirejs": "2.1.22"
+  },
+  "dependencies": {
+    "webcomponentsjs": "0.7.20",
+    "matchMedia": "matchmedia#0.3.0"
+  }
+}

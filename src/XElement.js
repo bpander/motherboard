@@ -1,4 +1,11 @@
-define(['./utils/StringUtil'], function (StringUtil) {
+define([
+    './utils/StringUtil',
+    './polyfills/CustomEvent',
+    './polyfills/Object.assign',
+    '../bower_components/webcomponentsjs/webcomponents-lite.js',
+    '../bower_components/matchMedia/matchMedia',
+    '../bower_components/matchMedia/matchMedia.addListener'
+], function (StringUtil) {
     'use strict';
 
 
