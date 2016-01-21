@@ -50,8 +50,18 @@ define(['./utils/StringUtil'], function (StringUtil) {
             if (attrDef === undefined) {
                 return;
             }
-            if (attrDef.responsive === true) {
+            var oldProp;
+            var oldEvaluatedProp;
+            var newEvaluatedProp;
+            var currentProp = 'current' + StringUtil.capitalize(StringUtil.toCamelCase(attrName));
+            if (attrDef.responsive === true && document.contains(this)) {
+                oldProp = (oldVal === null) ? '' + attrDef.default : oldVal;
+                oldEvaluatedProp = XElement.evaluateResponsiveAttribute(oldProp, attrDef.type);
                 XElement.updateResponsiveAttribute(this, attrName, attrDef);
+                newEvaluatedProp = this[currentProp];
+                if (oldEvaluatedProp !== newEvaluatedProp && attrDef.mediaChangedCallback instanceof Function) {
+                    attrDef.mediaChangedCallback.call(this, oldEvaluatedProp, newEvaluatedProp);
+                }
             }
             if (attrDef.changedCallback !== undefined) {
                 attrDef.changedCallback.call(this, oldVal, newVal);
@@ -146,13 +156,7 @@ define(['./utils/StringUtil'], function (StringUtil) {
         if (attrDef.responsive === true) {
             Object.defineProperty(prototype, 'current' + StringUtil.capitalize(prop), {
                 get: function () {
-                    var parsed = XElement.parseResponsiveAttribute(this[prop], attrDef.type);
-                    return parsed.breakpoints.reduce(function (previous, breakpoint) {
-                        if (window.matchMedia(breakpoint.mediaQuery).matches) {
-                            return breakpoint.value;
-                        }
-                        return previous;
-                    }, parsed.unmatched);
+                    return XElement.evaluateResponsiveAttribute(this[prop], attrDef.type);
                 }
             });
         }
@@ -180,6 +184,17 @@ define(['./utils/StringUtil'], function (StringUtil) {
                 };
             })
         };
+    };
+
+
+    XElement.evaluateResponsiveAttribute = function (value, type) {
+        var parsed = XElement.parseResponsiveAttribute(value, type);
+        return parsed.breakpoints.reduce(function (previous, breakpoint) {
+            if (window.matchMedia(breakpoint.mediaQuery).matches) {
+                return breakpoint.value;
+            }
+            return previous;
+        }, parsed.unmatched);
     };
 
 

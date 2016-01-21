@@ -29,11 +29,5 @@ define(['src/XElement'], function (XElement) {
         };
 
 
-        proto.attributeChangedCallback = function () {
-            XElement.mixin.attributeChangedCallback.apply(this, arguments);
-            console.log('overwritten');
-        };
-
-
     });
 });
