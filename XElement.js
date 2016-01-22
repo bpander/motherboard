@@ -375,4 +375,5 @@ XElementjs = function (XElementMixin, AttrDef) {
     return document.registerElement(customTagName, options);
   };
   return XElement;
-}(XElementMixin, AttrDef);}));
+}(XElementMixin, AttrDef);    return XElementjs;
+}));
