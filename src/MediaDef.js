@@ -37,6 +37,7 @@ define(function () {
             var newVal = this.params.element[this.params.attrDef.getEvaluatedPropertyName()];
             if (newVal !== oldVal) {
                 this.params.attrDef.params.mediaChangedCallback.call(this.params.element, oldVal, newVal);
+                oldVal = newVal;
             }
         }.bind(this);
 
