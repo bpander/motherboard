@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+    <head>
+        <title>xelement tests</title>
+    </head>
+    <body>
+
+        <x-carousel></x-carousel>
+        
+        <script src="../bower_components/requirejs/require.js"></script>
+        <script>
+            require.config({
+                paths: {
+                    XElement: '../XElement'
+                }
+            });
+            require(['main']);
+        </script>
+    </body>
+</html>

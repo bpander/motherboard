@@ -1,0 +1,8 @@
+require([
+    'XCarousel'
+], function (
+    XCarousel
+) {
+
+    
+});
