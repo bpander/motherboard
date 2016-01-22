@@ -1,6 +1,7 @@
 define([
     './utils/StringUtil',
     './AttrDef',
+    './MediaDef',
     './Binding',
     './polyfills/CustomEvent',
     './polyfills/Object.assign',
@@ -10,6 +11,7 @@ define([
 ], function (
     StringUtil,
     AttrDef,
+    MediaDef,
     Binding
 ) {
     'use strict';
@@ -25,11 +27,20 @@ define([
 
         createdCallback: function () {
             this.bindings = [];
-            this.mqDefs = [];
+            this.mediaDefs = this.customAttributes.map(function (attrDef) {
+                var mediaDef = new MediaDef({
+                    element: this,
+                    attrDef: attrDef
+                });
+                return mediaDef;
+            }, this);
         },
 
 
         attachedCallback: function () {
+            this.mediaDefs.forEach(function (mediaDef) {
+                mediaDef.update();
+            });
             var attrName;
             var attrDef;
             for (attrName in this.customAttributes) {
@@ -149,15 +160,15 @@ define([
 
     XElement.removeAttributeMqDefinitions = function (instance, attrName) {
         var mqDef;
-        var i = instance.mqDefs.length;
+        var i = instance.mediaDefs.length;
 
         // Loop backwards because we're potetially going to remove items from the array
-        while ((mqDef = instance.mqDefs[--i]) !== undefined) {
+        while ((mqDef = instance.mediaDefs[--i]) !== undefined) {
             if (mqDef.attribute !== attrName) {
                 continue;
             }
             mqDef.mql.removeListener(mqDef.mqlListner);
-            instance.mqDefs.splice(i, 1);
+            instance.mediaDefs.splice(i, 1);
         }
     };
 
@@ -183,7 +194,7 @@ define([
                 }
             };
             mql.addListener(mqlListner);
-            instance.mqDefs.push({
+            instance.mediaDefs.push({
                 mql: mql,
                 mqlListner: mqlListner,
                 attribute: attrName
