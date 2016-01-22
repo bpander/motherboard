@@ -14,7 +14,7 @@ define(function () {
 
         this.mqls = [];
 
-        this.listener = Function;
+        this.listener = Function.prototype; // noop
 
     }
 

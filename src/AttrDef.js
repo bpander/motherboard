@@ -10,8 +10,8 @@ define(['src/utils/StringUtil'], function (StringUtil) {
             type: null,
             default: null,
             responsive: false,
-            mediaChangedCallback: Function,
-            changedCallback: Function
+            mediaChangedCallback: Function.prototype, // noop
+            changedCallback: Function.prototype
         }, params);
 
     }
@@ -97,19 +97,19 @@ define(['src/utils/StringUtil'], function (StringUtil) {
                             if (isNaN(+value) ) {
                                 break;
                             }
-                            this.setAttribute(attrName, value);
+                            this.setAttribute(attrDef.name, value);
                             break;
                         }
 
                     case String:
-                        this.setAttribute(attrName, value);
+                        this.setAttribute(attrDef.name, value);
                         break;
 
                     case Boolean:
                         if (!!value) { // `!!` quickly casts to a boolean
-                            this.setAttribute(attrName, '');
+                            this.setAttribute(attrDef.name, '');
                         } else {
-                            this.removeAttribute(attrName);
+                            this.removeAttribute(attrDef.name);
                         }
                         break;
                 }
