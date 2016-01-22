@@ -5,30 +5,35 @@ define(['src/XElement'], function (XElement) {
     return XElement.define('x-carousel', function (proto) {
 
 
-        proto.customAttributes = {
-            'infinite': {
+        proto.customAttributes = [
+
+            XElement.attribute('infinite', {
                 type: Boolean
-            },
-            'slides-visible': {
+            }),
+
+            XElement.attribute('slides-visible', {
                 type: Number,
                 responsive: true,
                 default: '(min-width: 320px) 2, (min-width: 768px) 3, 1',
                 mediaChangedCallback: function (oldVal, newVal) {
                     console.log('mediaChangedCallback', oldVal, newVal);
                 }
-            },
-            'delay': {
+            }),
+
+            XElement.attribute('delay', {
                 type: Number,
                 default: 5000
-            },
-            'easing': {
+            }),
+
+            XElement.attribute('easing', {
                 type: String,
                 default: 'ease-out',
                 changedCallback: function (oldVal, newVal) {
                     console.log('easing changed', oldVal, newVal);
                 }
-            }
-        };
+            })
+
+        ];
 
 
     });

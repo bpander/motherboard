@@ -2,7 +2,9 @@ define(['src/utils/StringUtil'], function (StringUtil) {
     'use strict';
 
 
-    function AttrDef (params) {
+    function AttrDef (name, params) {
+
+        this.name = name;
 
         this.params = Object.assign({
             type: null,
@@ -15,25 +17,20 @@ define(['src/utils/StringUtil'], function (StringUtil) {
     }
 
 
-    AttrDef.create = function (params) {
-        return new AttrDef(params);
+    AttrDef.prototype.getPropertyName = function () {
+        return StringUtil.toCamelCase(this.name); // 'attr-name' => 'attrName'
     };
 
 
-    AttrDef.getPropertyName = function (attrName) {
-        return StringUtil.toCamelCase(attrName); // 'attr-name' => 'attrName'
+    AttrDef.prototype.getEvaluatedPropertyName = function () {
+        return 'current' + StringUtil.capitalize(this.getPropertyName()); // 'attr-name' => 'currentAttrName'
     };
 
 
-    AttrDef.getEvaluatedPropertyName = function (attrName) {
-        return 'current' + StringUtil.capitalize(AttrDef.getPropertyName(attrName)); // 'attr-name' => 'currentAttrName'
-    };
-
-
-    AttrDef.parseResponsiveAttribute = function (value, type) {
+    AttrDef.prototype.parseResponsiveAttribute = function (value) {
         var definitions = value.split(',').map(function (x) { return x.trim(); });
         var unmatched = definitions.pop();
-        if (type === Number) {
+        if (this.params.type === Number) {
             unmatched = +unmatched;
         }
         return {
@@ -42,20 +39,20 @@ define(['src/utils/StringUtil'], function (StringUtil) {
                 var parts = definition.split(/\s(?=[^\s]*$)/); // Find last occurence of whitespace and split at it
                 var mediaQuery = parts[0];
                 var value = parts[1];
-                if (type === Number) {
+                if (this.params.type === Number) {
                     value = +value;
                 }
                 return {
                     mediaQuery: mediaQuery,
                     value: value
                 };
-            })
+            }, this)
         };
     };
 
 
-    AttrDef.evaluateResponsiveAttribute = function (value, type) {
-        var parsed = AttrDef.parseResponsiveAttribute(value, type);
+    AttrDef.prototype.evaluateResponsiveAttribute = function (value) {
+        var parsed = this.parseResponsiveAttribute(value);
         return parsed.breakpoints.reduce(function (previous, breakpoint) {
             if (window.matchMedia(breakpoint.mediaQuery).matches) {
                 return breakpoint.value;
@@ -65,26 +62,26 @@ define(['src/utils/StringUtil'], function (StringUtil) {
     };
 
 
-    AttrDef.prototype.addToPrototype = function (prototype, attrName) {
-        var attrDef = this.params;
-        var prop = AttrDef.getPropertyName(attrName);
+    AttrDef.prototype.addToPrototype = function (prototype) {
+        var attrDef = this;
+        var prop = this.getPropertyName();
         Object.defineProperty(prototype, prop, {
             get: function () {
-                var attrValue = this.getAttribute(attrName);
-                switch (attrDef.type) {
+                var attrValue = this.getAttribute(attrDef.name);
+                switch (attrDef.params.type) {
 
                     case Number:
                         // If the attribute is responsive, fallthrough to the String case
-                        if (attrDef.responsive !== true) {
+                        if (attrDef.params.responsive !== true) {
                             if (attrValue === null || attrValue.trim() === '' || isNaN(+attrValue)) {
-                                attrValue = attrDef.default;
+                                attrValue = attrDef.params.default;
                             }
                             return +attrValue; // `+` quickly casts to a number
                         }
 
                     case String:
                         if (attrValue === null) {
-                            attrValue = attrDef.default + '';
+                            attrValue = attrDef.params.default + '';
                         }
                         return attrValue;
 
@@ -93,10 +90,10 @@ define(['src/utils/StringUtil'], function (StringUtil) {
                 }
             },
             set: function (value) {
-                switch (attrDef.type) {
+                switch (attrDef.params.type) {
                     case Number:
                         // If the attribute is responsive, fallthrough to the String case
-                        if (attrDef.responsive !== true) {
+                        if (attrDef.params.responsive !== true) {
                             if (isNaN(+value) ) {
                                 break;
                             }
@@ -118,10 +115,10 @@ define(['src/utils/StringUtil'], function (StringUtil) {
                 }
             }
         });
-        if (attrDef.responsive === true) {
-            Object.defineProperty(prototype, AttrDef.getEvaluatedPropertyName(attrName), {
+        if (attrDef.params.responsive === true) {
+            Object.defineProperty(prototype, this.getEvaluatedPropertyName(), {
                 get: function () {
-                    return AttrDef.evaluateResponsiveAttribute(this[prop], attrDef.type);
+                    return attrDef.evaluateResponsiveAttribute(this[prop]);
                 }
             });
         }

@@ -20,7 +20,7 @@ define([
 
     XElement.mixin = {
 
-        customAttributes: {},
+        customAttributes: [],
 
 
         createdCallback: function () {
@@ -142,6 +142,11 @@ define([
     };
 
 
+    XElement.attribute = function (name, params) {
+        return new AttrDef(name, params);
+    };
+
+
     XElement.removeAttributeMqDefinitions = function (instance, attrName) {
         var mqDef;
         var i = instance.mqDefs.length;
@@ -241,12 +246,9 @@ define([
 
         // Register custom attributes
         var prototype = options.prototype;
-        var attrName;
-        for (attrName in prototype.customAttributes) {
-            if (prototype.customAttributes.hasOwnProperty(attrName)) {
-                AttrDef.create(prototype.customAttributes[attrName]).addToPrototype(prototype, attrName);
-            }
-        }
+        prototype.customAttributes.forEach(function (attrDef) {
+            attrDef.addToPrototype(prototype);
+        });
 
         // Register the custom element
         return document.registerElement(customTagName, options);
