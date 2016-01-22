@@ -1,5 +1,6 @@
 define([
     './utils/StringUtil',
+    './AttrDef',
     './Binding',
     './polyfills/CustomEvent',
     './polyfills/Object.assign',
@@ -8,6 +9,7 @@ define([
     '../bower_components/matchMedia/matchMedia.addListener'
 ], function (
     StringUtil,
+    AttrDef,
     Binding
 ) {
     'use strict';
@@ -66,7 +68,7 @@ define([
             var currentProp = 'current' + StringUtil.capitalize(StringUtil.toCamelCase(attrName));
             if (attrDef.responsive === true && document.contains(this)) {
                 oldProp = (oldVal === null) ? '' + attrDef.default : oldVal;
-                oldEvaluatedProp = XElement.evaluateResponsiveAttribute(oldProp, attrDef.type);
+                oldEvaluatedProp = AttrDef.evaluateResponsiveAttribute(oldProp, attrDef.type);
                 XElement.updateResponsiveAttribute(this, attrName, attrDef);
                 newEvaluatedProp = this[currentProp];
                 if (oldEvaluatedProp !== newEvaluatedProp && attrDef.mediaChangedCallback instanceof Function) {
@@ -140,103 +142,6 @@ define([
     };
 
 
-    XElement.registerCustomAttribute = function (prototype, attrName, attrDef) {
-        var prop = StringUtil.toCamelCase(attrName);
-        Object.defineProperty(prototype, prop, {
-            get: function () {
-                var attrValue = this.getAttribute(attrName);
-                switch (attrDef.type) {
-
-                    case Number:
-                        // If the attribute is responsive, fallthrough to the String case
-                        if (attrDef.responsive !== true) {
-                            if (attrValue === null || attrValue.trim() === '' || isNaN(+attrValue)) {
-                                attrValue = attrDef.default;
-                            }
-                            return +attrValue; // `+` quickly casts to a number
-                        }
-
-                    case String:
-                        if (attrValue === null) {
-                            attrValue = attrDef.default + '';
-                        }
-                        return attrValue;
-
-                    case Boolean:
-                        return attrValue !== null;
-                }
-            },
-            set: function (value) {
-                switch (attrDef.type) {
-                    case Number:
-                        // If the attribute is responsive, fallthrough to the String case
-                        if (attrDef.responsive !== true) {
-                            if (isNaN(+value) ) {
-                                break;
-                            }
-                            this.setAttribute(attrName, value);
-                            break;
-                        }
-
-                    case String:
-                        this.setAttribute(attrName, value);
-                        break;
-
-                    case Boolean:
-                        if (!!value) { // `!!` quickly casts to a boolean
-                            this.setAttribute(attrName, '');
-                        } else {
-                            this.removeAttribute(attrName);
-                        }
-                        break;
-                }
-            }
-        });
-        if (attrDef.responsive === true) {
-            Object.defineProperty(prototype, 'current' + StringUtil.capitalize(prop), {
-                get: function () {
-                    return XElement.evaluateResponsiveAttribute(this[prop], attrDef.type);
-                }
-            });
-        }
-    };
-
-
-    XElement.parseResponsiveAttribute = function (value, type) {
-        var definitions = value.split(',').map(function (x) { return x.trim(); });
-        var unmatched = definitions.pop();
-        if (type === Number) {
-            unmatched = +unmatched;
-        }
-        return {
-            unmatched: unmatched,
-            breakpoints: definitions.map(function (definition) {
-                var parts = definition.split(/\s(?=[^\s]*$)/); // Find last occurence of whitespace and split at it
-                var mediaQuery = parts[0];
-                var value = parts[1];
-                if (type === Number) {
-                    value = +value;
-                }
-                return {
-                    mediaQuery: mediaQuery,
-                    value: value
-                };
-            })
-        };
-    };
-
-
-    XElement.evaluateResponsiveAttribute = function (value, type) {
-        var parsed = XElement.parseResponsiveAttribute(value, type);
-        return parsed.breakpoints.reduce(function (previous, breakpoint) {
-            if (window.matchMedia(breakpoint.mediaQuery).matches) {
-                return breakpoint.value;
-            }
-            return previous;
-        }, parsed.unmatched);
-    };
-
-
     XElement.removeAttributeMqDefinitions = function (instance, attrName) {
         var mqDef;
         var i = instance.mqDefs.length;
@@ -255,7 +160,7 @@ define([
     XElement.updateResponsiveAttribute = function (instance, attrName, attrDef) {
         XElement.removeAttributeMqDefinitions(instance, attrName);
         var prop = StringUtil.toCamelCase(attrName);
-        var parsed = XElement.parseResponsiveAttribute(instance[prop], attrDef.type);
+        var parsed = AttrDef.parseResponsiveAttribute(instance[prop], attrDef.type);
         var oldVal = parsed.unmatched;
         parsed.breakpoints.forEach(function (breakpoint) {
             var mql = window.matchMedia(breakpoint.mediaQuery);
@@ -339,7 +244,7 @@ define([
         var attrName;
         for (attrName in prototype.customAttributes) {
             if (prototype.customAttributes.hasOwnProperty(attrName)) {
-                XElement.registerCustomAttribute(prototype, attrName, prototype.customAttributes[attrName]);
+                AttrDef.create(prototype.customAttributes[attrName]).addToPrototype(prototype, attrName);
             }
         }
 

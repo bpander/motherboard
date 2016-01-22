@@ -6,7 +6,9 @@ define(['src/XElement'], function (XElement) {
 
 
         proto.customAttributes = {
-            'infinite': { type: Boolean },
+            'infinite': {
+                type: Boolean
+            },
             'slides-visible': {
                 type: Number,
                 responsive: true,
@@ -15,15 +17,15 @@ define(['src/XElement'], function (XElement) {
                     console.log('mediaChangedCallback', oldVal, newVal);
                 }
             },
-            'speed': {
+            'delay': {
                 type: Number,
-                default: 3000
+                default: 5000
             },
-            'active-class': {
+            'easing': {
                 type: String,
-                default: 'active',
+                default: 'ease-out',
                 changedCallback: function (oldVal, newVal) {
-                    console.log('active-class changed', oldVal, newVal);
+                    console.log('easing changed', oldVal, newVal);
                 }
             }
         };
