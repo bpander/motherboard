@@ -15,7 +15,7 @@ define([
         createdCallback: function () {
             this.bindings = [];
             this.mediaDefs = this.customAttributes
-                .filter(function (x) { return x.params.responsive === true; })
+                .filter(function (x) { return x.responsive === true; })
                 .map(function (attrDef) {
                     return new MediaDef({
                         element: this,
@@ -44,20 +44,20 @@ define([
             if (attrDef === undefined) {
                 return;
             }
-            attrDef.params.changedCallback.call(this, oldVal, newVal);
+            attrDef.changedCallback.call(this, oldVal, newVal);
 
-            var mediaDef = this.mediaDefs.find(function (x) { return x.params.attrDef === attrDef; });
+            var mediaDef = this.mediaDefs.find(function (x) { return x.attrDef === attrDef; });
             if (mediaDef === undefined || document.contains(this) === false) {
                 return;
             }
 
             mediaDef.update();
 
-            var oldProp = (oldVal === null) ? '' + attrDef.params.default : oldVal;
+            var oldProp = (oldVal === null) ? '' + attrDef.default : oldVal;
             var oldEvaluatedProp = attrDef.evaluateResponsiveAttribute(oldProp);
             var newEvaluatedProp = this[attrDef.getEvaluatedPropertyName()];
             if (oldEvaluatedProp !== newEvaluatedProp) {
-                attrDef.params.mediaChangedCallback.call(this, oldEvaluatedProp, newEvaluatedProp);
+                attrDef.mediaChangedCallback.call(this, oldEvaluatedProp, newEvaluatedProp);
             }
         },
 

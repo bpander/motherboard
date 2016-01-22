@@ -6,15 +6,28 @@ define(['src/utils/StringUtil'], function (StringUtil) {
 
         this.name = name;
 
-        this.params = Object.assign({
-            type: null,
-            default: null,
-            responsive: false,
-            mediaChangedCallback: Function.prototype, // noop
-            changedCallback: Function.prototype
-        }, params);
+        this.type = null;
+        
+        this.default = null;
+        
+        this.responsive = false;
+        
+        this.mediaChangedCallback = Function.prototype; // noop
+        
+        this.changedCallback = Function.prototype; // noop
 
+        this.set(params);
     }
+
+
+    AttrDef.prototype.set = function (params) {
+        var prop;
+        for (prop in params) {
+            if (params.hasOwnProperty(prop) && this.hasOwnProperty(prop)) {
+                this[prop] = params[prop];
+            }
+        }
+    };
 
 
     AttrDef.prototype.getPropertyName = function () {
@@ -30,7 +43,7 @@ define(['src/utils/StringUtil'], function (StringUtil) {
     AttrDef.prototype.parseResponsiveAttribute = function (value) {
         var definitions = value.split(',').map(function (x) { return x.trim(); });
         var unmatched = definitions.pop();
-        if (this.params.type === Number) {
+        if (this.type === Number) {
             unmatched = +unmatched;
         }
         return {
@@ -39,7 +52,7 @@ define(['src/utils/StringUtil'], function (StringUtil) {
                 var parts = definition.split(/\s(?=[^\s]*$)/); // Find last occurence of whitespace and split at it
                 var mediaQuery = parts[0];
                 var value = parts[1];
-                if (this.params.type === Number) {
+                if (this.type === Number) {
                     value = +value;
                 }
                 return {
@@ -68,20 +81,20 @@ define(['src/utils/StringUtil'], function (StringUtil) {
         Object.defineProperty(prototype, prop, {
             get: function () {
                 var attrValue = this.getAttribute(attrDef.name);
-                switch (attrDef.params.type) {
+                switch (attrDef.type) {
 
                     case Number:
                         // If the attribute is responsive, fallthrough to the String case
-                        if (attrDef.params.responsive !== true) {
+                        if (attrDef.responsive !== true) {
                             if (attrValue === null || attrValue.trim() === '' || isNaN(+attrValue)) {
-                                attrValue = attrDef.params.default;
+                                attrValue = attrDef.default;
                             }
                             return +attrValue; // `+` quickly casts to a number
                         }
 
                     case String:
                         if (attrValue === null) {
-                            attrValue = attrDef.params.default + '';
+                            attrValue = attrDef.default + '';
                         }
                         return attrValue;
 
@@ -90,10 +103,10 @@ define(['src/utils/StringUtil'], function (StringUtil) {
                 }
             },
             set: function (value) {
-                switch (attrDef.params.type) {
+                switch (attrDef.type) {
                     case Number:
                         // If the attribute is responsive, fallthrough to the String case
-                        if (attrDef.params.responsive !== true) {
+                        if (attrDef.responsive !== true) {
                             if (isNaN(+value) ) {
                                 break;
                             }
@@ -115,7 +128,7 @@ define(['src/utils/StringUtil'], function (StringUtil) {
                 }
             }
         });
-        if (attrDef.params.responsive === true) {
+        if (attrDef.responsive === true) {
             Object.defineProperty(prototype, this.getEvaluatedPropertyName(), {
                 get: function () {
                     return attrDef.evaluateResponsiveAttribute(this[prop]);

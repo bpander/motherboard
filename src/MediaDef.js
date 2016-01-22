@@ -4,19 +4,26 @@ define(function () {
 
     function MediaDef (params) {
 
-        this.params = Object.assign({
+        this.attrDef =  null;
 
-            attrDef: null,
-
-            element: null
-
-        }, params);
+        this.element =  null;
 
         this.mqls = [];
 
         this.listener = Function.prototype; // noop
 
+        this.set(params);
     }
+
+
+    MediaDef.prototype.set = function (params) {
+        var prop;
+        for (prop in params) {
+            if (params.hasOwnProperty(prop) && this.hasOwnProperty(prop)) {
+                this[prop] = params[prop];
+            }
+        }
+    };
 
 
     MediaDef.prototype.update = function () {
@@ -25,18 +32,18 @@ define(function () {
         }, this);
         this.mqls = [];
 
-        if (document.contains(this.params.element) === false) {
+        if (document.contains(this.element) === false) {
             return;
         }
 
-        var prop = this.params.attrDef.getPropertyName();
-        var parsed = this.params.attrDef.parseResponsiveAttribute(this.params.element[prop]);
+        var prop = this.attrDef.getPropertyName();
+        var parsed = this.attrDef.parseResponsiveAttribute(this.element[prop]);
         var oldVal = parsed.unmatched;
 
         this.listener = function () {
-            var newVal = this.params.element[this.params.attrDef.getEvaluatedPropertyName()];
+            var newVal = this.element[this.attrDef.getEvaluatedPropertyName()];
             if (newVal !== oldVal) {
-                this.params.attrDef.params.mediaChangedCallback.call(this.params.element, oldVal, newVal);
+                this.attrDef.mediaChangedCallback.call(this.element, oldVal, newVal);
                 oldVal = newVal;
             }
         }.bind(this);
