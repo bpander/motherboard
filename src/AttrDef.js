@@ -1,4 +1,4 @@
-define(['src/utils/StringUtil'], function (StringUtil) {
+define(['utils/StringUtil'], function (StringUtil) {
     'use strict';
 
 

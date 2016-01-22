@@ -1,6 +1,6 @@
 define([
-    'src/Binding',
-    'src/MediaDef'
+    'Binding',
+    'MediaDef'
 ], function (
     Binding,
     MediaDef

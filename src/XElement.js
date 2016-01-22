@@ -1,11 +1,6 @@
 define([
-    './XElementMixin',
-    './AttrDef',
-    './polyfills/CustomEvent',
-    './polyfills/Object.assign',
-    '../bower_components/webcomponentsjs/webcomponents-lite.js',
-    '../bower_components/matchMedia/matchMedia',
-    '../bower_components/matchMedia/matchMedia.addListener'
+    'XElementMixin',
+    'AttrDef',
 ], function (
     XElementMixin,
     AttrDef

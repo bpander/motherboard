@@ -5,7 +5,7 @@
     "Brad Anderson <banderso@nerdery.com>"
   ],
   "description": "",
-  "main": "",
+  "main": "XElement.js",
   "moduleType": [],
   "license": "BSD",
   "ignore": [
@@ -13,7 +13,8 @@
     "node_modules",
     "bower_components",
     "test",
-    "tests"
+    "tests",
+    "src"
   ],
   "devDependencies": {
     "requirejs": "2.1.22"
