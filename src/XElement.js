@@ -27,13 +27,14 @@ define([
 
         createdCallback: function () {
             this.bindings = [];
-            this.mediaDefs = this.customAttributes.map(function (attrDef) {
-                var mediaDef = new MediaDef({
-                    element: this,
-                    attrDef: attrDef
-                });
-                return mediaDef;
-            }, this);
+            this.mediaDefs = this.customAttributes
+                .filter(function (x) { return x.params.responsive === true; })
+                .map(function (attrDef) {
+                    return new MediaDef({
+                        element: this,
+                        attrDef: attrDef
+                    });
+                }, this);
         },
 
 
@@ -41,34 +42,18 @@ define([
             this.mediaDefs.forEach(function (mediaDef) {
                 mediaDef.update();
             });
-            var attrName;
-            var attrDef;
-            for (attrName in this.customAttributes) {
-                if (this.customAttributes.hasOwnProperty(attrName)) {
-                    attrDef = this.customAttributes[attrName];
-                    if (attrDef.responsive === true) {
-                        XElement.updateResponsiveAttribute(this, attrName, attrDef);
-                    }
-                }
-            }
         },
 
 
         detachedCallback: function () {
-            var attrName;
-            var attrDef;
-            for (attrName in this.customAttributes) {
-                if (this.customAttributes.hasOwnProperty(attrName)) {
-                    attrDef = this.customAttributes[attrName];
-                    if (attrDef.responsive === true) {
-                        XElement.removeAttributeMqDefinitions(this, attrName);
-                    }
-                }
-            }
+            this.mediaDefs.forEach(function (mediaDef) {
+                mediaDef.update();
+            });
         },
 
 
         attributeChangedCallback: function (attrName, oldVal, newVal) {
+            console.log('attributeChangedCallback');
             var attrDef = this.customAttributes[attrName];
             if (attrDef === undefined) {
                 return;
@@ -155,51 +140,6 @@ define([
 
     XElement.attribute = function (name, params) {
         return new AttrDef(name, params);
-    };
-
-
-    XElement.removeAttributeMqDefinitions = function (instance, attrName) {
-        var mqDef;
-        var i = instance.mediaDefs.length;
-
-        // Loop backwards because we're potetially going to remove items from the array
-        while ((mqDef = instance.mediaDefs[--i]) !== undefined) {
-            if (mqDef.attribute !== attrName) {
-                continue;
-            }
-            mqDef.mql.removeListener(mqDef.mqlListner);
-            instance.mediaDefs.splice(i, 1);
-        }
-    };
-
-
-    XElement.updateResponsiveAttribute = function (instance, attrName, attrDef) {
-        XElement.removeAttributeMqDefinitions(instance, attrName);
-        var prop = StringUtil.toCamelCase(attrName);
-        var parsed = AttrDef.parseResponsiveAttribute(instance[prop], attrDef.type);
-        var oldVal = parsed.unmatched;
-        parsed.breakpoints.forEach(function (breakpoint) {
-            var mql = window.matchMedia(breakpoint.mediaQuery);
-            if (mql.matches) {
-                oldVal = breakpoint.value;
-            }
-            var mqlListner = function () {
-                var currentProp = 'current' + StringUtil.capitalize(prop);
-                var newVal = instance[currentProp];
-                if (newVal !== oldVal) {
-                    if (attrDef.mediaChangedCallback instanceof Function) {
-                        attrDef.mediaChangedCallback.call(instance, oldVal, newVal);
-                    }
-                    oldVal = newVal;
-                }
-            };
-            mql.addListener(mqlListner);
-            instance.mediaDefs.push({
-                mql: mql,
-                mqlListner: mqlListner,
-                attribute: attrName
-            });
-        });
     };
 
 

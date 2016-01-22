@@ -12,7 +12,7 @@ define(function () {
 
         }, params);
 
-        this.mql = null;
+        this.mqls = [];
 
         this.listener = Function;
 
@@ -20,44 +20,34 @@ define(function () {
 
 
     MediaDef.prototype.update = function () {
-        var prop = this.attrDef.getPropertyName();
-        var parsed = this.attrDef.parseResponsiveAttribute(this.element[prop]);
-
-        if (this.mql !== null) {
-            this.mql.removeListener(this.listener);
-        }
+        this.mqls.forEach(function (mql) {
+            mql.removeListener(this.listener);
+        }, this);
+        this.mqls = [];
 
         if (document.contains(this.params.element) === false) {
             return;
         }
 
-        var media = parsed.breakpoints.join();
+        var prop = this.params.attrDef.getPropertyName();
+        var parsed = this.params.attrDef.parseResponsiveAttribute(this.params.element[prop]);
+        var oldVal = parsed.unmatched;
+
         this.listener = function () {
+            var newVal = this.params.element[this.params.attrDef.getEvaluatedPropertyName()];
+            if (newVal !== oldVal) {
+                this.params.attrDef.params.mediaChangedCallback.call(this.params.element, oldVal, newVal);
+            }
+        }.bind(this);
 
-        };
-
-        parsed.breakpoints.forEach(function (breakpoint) {
+        this.mqls = parsed.breakpoints.map(function (breakpoint) {
             var mql = window.matchMedia(breakpoint.mediaQuery);
             if (mql.matches) {
                 oldVal = breakpoint.value;
             }
-            var mqlListner = function () {
-                var currentProp = 'current' + StringUtil.capitalize(prop);
-                var newVal = instance[currentProp];
-                if (newVal !== oldVal) {
-                    if (attrDef.mediaChangedCallback instanceof Function) {
-                        attrDef.mediaChangedCallback.call(instance, oldVal, newVal);
-                    }
-                    oldVal = newVal;
-                }
-            };
-            mql.addListener(mqlListner);
-            instance.mediaDefs.push({
-                mql: mql,
-                mqlListner: mqlListner,
-                attribute: attrName
-            });
-        });
+            mql.addListener(this.listener);
+            return mql;
+        }, this);
     };
 
 
