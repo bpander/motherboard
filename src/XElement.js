@@ -53,26 +53,24 @@ define([
 
 
         attributeChangedCallback: function (attrName, oldVal, newVal) {
-            console.log('attributeChangedCallback');
-            var attrDef = this.customAttributes[attrName];
+            var attrDef = this.customAttributes.find(function (x) { return x.name === attrName; });
             if (attrDef === undefined) {
                 return;
             }
-            var oldProp;
-            var oldEvaluatedProp;
-            var newEvaluatedProp;
-            var currentProp = 'current' + StringUtil.capitalize(StringUtil.toCamelCase(attrName));
-            if (attrDef.responsive === true && document.contains(this)) {
-                oldProp = (oldVal === null) ? '' + attrDef.default : oldVal;
-                oldEvaluatedProp = AttrDef.evaluateResponsiveAttribute(oldProp, attrDef.type);
-                XElement.updateResponsiveAttribute(this, attrName, attrDef);
-                newEvaluatedProp = this[currentProp];
-                if (oldEvaluatedProp !== newEvaluatedProp && attrDef.mediaChangedCallback instanceof Function) {
-                    attrDef.mediaChangedCallback.call(this, oldEvaluatedProp, newEvaluatedProp);
-                }
+            attrDef.params.changedCallback.call(this, oldVal, newVal);
+
+            var mediaDef = this.mediaDefs.find(function (x) { return x.params.attrDef === attrDef; });
+            if (mediaDef === undefined || document.contains(this) === false) {
+                return;
             }
-            if (attrDef.changedCallback !== undefined) {
-                attrDef.changedCallback.call(this, oldVal, newVal);
+
+            mediaDef.update();
+
+            var oldProp = (oldVal === null) ? '' + attrDef.params.default : oldVal;
+            var oldEvaluatedProp = attrDef.evaluateResponsiveAttribute(oldProp);
+            var newEvaluatedProp = this[attrDef.getEvaluatedPropertyName()];
+            if (oldEvaluatedProp !== newEvaluatedProp) {
+                attrDef.params.mediaChangedCallback.call(this, oldEvaluatedProp, newEvaluatedProp);
             }
         },
 
