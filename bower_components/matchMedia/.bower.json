@@ -16,7 +16,6 @@
     "commit": "cda14dfeec36cfd83a7f13298c16b92c6ca85403"
   },
   "_source": "git://github.com/paulirish/matchMedia.js.git",
-  "_target": "~0.3.0",
-  "_originalSource": "matchmedia",
-  "_direct": true
+  "_target": "0.3.0",
+  "_originalSource": "matchmedia"
 }

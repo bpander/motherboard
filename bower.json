@@ -17,9 +17,7 @@
     "src"
   ],
   "devDependencies": {
-    "requirejs": "2.1.22"
-  },
-  "dependencies": {
+    "requirejs": "2.1.22",
     "webcomponentsjs": "0.7.20",
     "matchMedia": "matchmedia#0.3.0"
   }
