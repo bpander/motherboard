@@ -17,11 +17,10 @@ define([
 
 
     XElement.define = function (customTagName, definition) {
-        var base = HTMLElement.prototype;
+        var base = Object.assign(Object.create(HTMLElement.prototype), XElementMixin);
         var prototype = Object.create(base);
-        Object.assign(prototype, XElementMixin);
         Object.defineProperty(prototype, 'selector', { value: customTagName });
-        definition(prototype, XElementMixin, base);
+        definition(prototype, base);
         return _register(customTagName, { prototype: prototype });
     };
 

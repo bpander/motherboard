@@ -4,12 +4,13 @@ define(function (require) {
     var XElement = require('XElement');
 
 
-    return XElement.define('x-carousel', function (proto, mixin, base) {
+    return XElement.define('x-carousel', function (proto, base) {
 
         proto.createdCallback = function () {
-            mixin.createdCallback.call(this);
+            base.createdCallback.call(this);
             console.log('createdCallback');
         };
 
     });
+
 });
