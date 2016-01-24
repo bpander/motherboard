@@ -14,7 +14,8 @@
     "bower_components",
     "test",
     "tests",
-    "src"
+    "src",
+    "Gruntfile.js"
   ],
   "devDependencies": {
     "requirejs": "2.1.22",
