@@ -17,7 +17,8 @@ define([
 
 
     XElement.define = function (customTagName, definition) {
-        var base = Object.assign(Object.create(HTMLElement.prototype), XElementMixin);
+        var constructor = HTMLElement;
+        var base = Object.assign(Object.create(constructor.prototype), XElementMixin);
         var prototype = Object.create(base);
         Object.defineProperty(prototype, 'selector', { value: customTagName });
         definition(prototype, base);
@@ -34,12 +35,11 @@ define([
 
 
     var _extendNative = function (tagName, customTagName, definition) {
-        var base = document.createElement(tagName).constructor.prototype;
+        var constructor = document.createElement(tagName).constructor;
+        var base = Object.assign(Object.create(constructor.prototype), XElementMixin);
         var prototype = Object.create(base);
-        Object.assign(prototype, XElementMixin);
         Object.defineProperty(prototype, 'selector', { value: tagName + '[is="' + customTagName + '"]' });
-        definition(prototype, XElementMixin, base);
-
+        definition(prototype, base);
         return _register(customTagName, { prototype: prototype, extends: tagName });
     };
 
@@ -58,7 +58,7 @@ define([
         var base = T.prototype;
         var prototype = Object.create(base);
         Object.defineProperty(prototype, 'selector', { value: selector });
-        definition(prototype, XElementMixin, base);
+        definition(prototype, base);
 
         options.prototype = prototype;
         return _register(customTagName, options);
