@@ -1,7 +1,13 @@
 require([
-    'XCarousel'
+    'XCarousel',
+    'XCarouselTwo',
+    'XForm',
+    'XAjaxForm'
 ], function (
-    XCarousel
+    XCarousel,
+    XCarouselTwo,
+    XForm,
+    XAjaxForm
 ) {
 
     
