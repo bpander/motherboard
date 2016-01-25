@@ -158,7 +158,7 @@ XElementMixin = function (Binding, MediaDef) {
       return this.querySelectorAll('[data-tag="' + tag + '"]');
     },
     createBinding: function (target, type, handler) {
-      var binding = new Binding(target, type, handler);
+      var binding = new Binding(target, type, handler.bind(this));
       this.bindings.push(binding);
       return binding;
     },

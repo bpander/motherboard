@@ -91,7 +91,7 @@ define([
 
 
         createBinding: function (target, type, handler) {
-            var binding = new Binding(target, type, handler);
+            var binding = new Binding(target, type, handler.bind(this));
             this.bindings.push(binding);
             return binding;
         },
