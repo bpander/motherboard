@@ -116,7 +116,7 @@ define([
 
 
         trigger: function (type, detail) {
-            var e = new CustomEvent(type, { detail: detail });
+            var e = new CustomEvent(type, { detail: detail, bubbles: true });
             return this.dispatchEvent(e);
         }
 
