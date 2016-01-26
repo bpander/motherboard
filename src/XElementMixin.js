@@ -76,7 +76,7 @@ define([
             if (tag !== undefined) {
                 selector += '[data-tag="' + tag + '"]';
             }
-            return this.querySelectorAll(selector);
+            return _nodeListToArray(this.querySelectorAll(selector));
         },
 
 
@@ -86,7 +86,7 @@ define([
 
 
         findAllWithTag: function (tag) {
-            return this.querySelectorAll('[data-tag="' + tag + '"]');
+            return _nodeListToArray(this.querySelectorAll('[data-tag="' + tag + '"]'));
         },
 
 
@@ -120,6 +120,16 @@ define([
             return this.dispatchEvent(e);
         }
 
+    };
+
+
+    var _nodeListToArray = function (nodeList) {
+        var l = nodeList.length;
+        var arr = new Array(l); // Setting the length first speeds up the conversion
+        for (var i = 0; i < l; i++) {
+            arr[i] = nodeList[i];
+        }
+        return arr;
     };
 
 

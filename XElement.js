@@ -149,13 +149,13 @@ XElementMixin = function (Binding, MediaDef) {
       if (tag !== undefined) {
         selector += '[data-tag="' + tag + '"]';
       }
-      return this.querySelectorAll(selector);
+      return _nodeListToArray(this.querySelectorAll(selector));
     },
     findWithTag: function (tag) {
       return this.querySelector('[data-tag="' + tag + '"]');
     },
     findAllWithTag: function (tag) {
-      return this.querySelectorAll('[data-tag="' + tag + '"]');
+      return _nodeListToArray(this.querySelectorAll('[data-tag="' + tag + '"]'));
     },
     createBinding: function (target, type, handler) {
       var binding = new Binding(target, type, handler.bind(this));
@@ -180,6 +180,15 @@ XElementMixin = function (Binding, MediaDef) {
       var e = new CustomEvent(type, { detail: detail });
       return this.dispatchEvent(e);
     }
+  };
+  var _nodeListToArray = function (nodeList) {
+    var l = nodeList.length;
+    var arr = new Array(l);
+    // Setting the length first speeds up the conversion
+    for (var i = 0; i < l; i++) {
+      arr[i] = nodeList[i];
+    }
+    return arr;
   };
   return XElementMixin;
 }(Binding, MediaDef);
