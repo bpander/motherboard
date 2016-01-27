@@ -236,6 +236,12 @@ AttrDef = function (StringUtil) {
     return 'current' + StringUtil.capitalize(this.getPropertyName());  // 'attr-name' => 'currentAttrName'
   };
   AttrDef.prototype.parseResponsiveAttribute = function (value) {
+    if (value === null) {
+      return {
+        unmatched: null,
+        breakpoints: []
+      };
+    }
     var definitions = value.split(',').map(function (x) {
       return x.trim();
     });
@@ -280,12 +286,18 @@ AttrDef = function (StringUtil) {
           // If the attribute is responsive, fallthrough to the String case
           if (attrDef.responsive !== true) {
             if (attrValue === null || attrValue.trim() === '' || isNaN(+attrValue)) {
+              if (attrDef.default === null) {
+                return null;
+              }
               attrValue = attrDef.default;
             }
             return +attrValue;  // `+` quickly casts to a number
           }
         case String:
           if (attrValue === null) {
+            if (attrDef.default === null) {
+              return null;
+            }
             attrValue = attrDef.default + '';
           }
           return attrValue;

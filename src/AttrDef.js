@@ -41,6 +41,12 @@ define(['utils/StringUtil'], function (StringUtil) {
 
 
     AttrDef.prototype.parseResponsiveAttribute = function (value) {
+        if (value === null) {
+            return {
+                unmatched: null,
+                breakpoints: []
+            }
+        }
         var definitions = value.split(',').map(function (x) { return x.trim(); });
         var unmatched = definitions.pop();
         if (this.type === Number) {
@@ -87,6 +93,9 @@ define(['utils/StringUtil'], function (StringUtil) {
                         // If the attribute is responsive, fallthrough to the String case
                         if (attrDef.responsive !== true) {
                             if (attrValue === null || attrValue.trim() === '' || isNaN(+attrValue)) {
+                                if (attrDef.default === null) {
+                                    return null;
+                                }
                                 attrValue = attrDef.default;
                             }
                             return +attrValue; // `+` quickly casts to a number
@@ -94,6 +103,9 @@ define(['utils/StringUtil'], function (StringUtil) {
 
                     case String:
                         if (attrValue === null) {
+                            if (attrDef.default === null) {
+                                return null;
+                            }
                             attrValue = attrDef.default + '';
                         }
                         return attrValue;
