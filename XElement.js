@@ -398,6 +398,12 @@ XElementjs = function (XElementMixin, AttrDef) {
     // Register the custom element
     return document.registerElement(customTagName, options);
   };
+  XElement.setTag = function (element, tag) {
+    element.dataset.tag = tag;
+  };
+  XElement.getTag = function (element) {
+    return element.dataset.tag;
+  };
   return XElement;
 }(XElementMixin, AttrDef);    return XElementjs;
 }));
