@@ -62,6 +62,9 @@ define([
         },
 
 
+        // TODO: Maybe refactor element queries to use getElementsByTagName? http://jsperf.com/exhaustive-selector-performance-test
+
+
         getComponent: function (T, tag) {
             var selector = T.prototype.selector;
             if (tag !== undefined) {
