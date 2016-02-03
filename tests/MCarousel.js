@@ -1,25 +1,27 @@
 define(function (require) {
     'use strict';
 
-    var XElement = require('XElement');
+    var M = require('motherboard');
 
 
-    return XElement.define('x-carousel', function (proto, base) {
+    return M.define('m-carousel', function (proto, base) {
 
         proto.customAttributes = [
-            XElement.attribute('slides-visible', {
+
+            M.attribute('slides-visible', {
                 type: Number,
                 responsive: true,
                 mediaChangedCallback: function (oldVal, newVal) {
                     console.log('mediaChangedCallback', oldVal, newVal);
                 }
             })
+
         ];
 
 
         proto.createdCallback = function () {
             base.createdCallback.call(this);
-            console.log('x-carousel.createdCallback', this.selector);
+            console.log('m-carousel.createdCallback', this.selector);
         };
 
     });
