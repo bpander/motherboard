@@ -347,7 +347,7 @@ Motherboardjs = function (MElementMixin, AttrDef) {
   M.attribute = function (name, params) {
     return new AttrDef(name, params);
   };
-  M.define = function (customTagName, definition) {
+  M.element = function (customTagName, definition) {
     var constructor = HTMLElement;
     var base = Object.assign(Object.create(constructor.prototype), MElementMixin);
     var prototype = Object.create(base);

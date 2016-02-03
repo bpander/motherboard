@@ -4,7 +4,7 @@ define(function (require) {
     var M = require('motherboard');
 
 
-    return M.define('m-carousel', function (proto, base) {
+    return M.element('m-carousel', function (proto, base) {
 
         proto.customAttributes = [
 
