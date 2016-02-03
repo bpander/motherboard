@@ -5,7 +5,7 @@
   } else if (typeof exports === 'object') {
     module.exports = factory();
   } else {
-    root['XElement'] = factory();
+    root['M'] = factory();
   }
 
 }(this, function () {

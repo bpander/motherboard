@@ -1,11 +1,11 @@
 {
-  "name": "xelement",
-  "homepage": "https://github.com/banderso-n/xelement",
+  "name": "motherboard",
+  "homepage": "https://github.com/bpander/motherboard",
   "authors": [
     "Brad Anderson <banderso@nerdery.com>"
   ],
   "description": "",
-  "main": "XElement.js",
+  "main": "Motherboard.js",
   "moduleType": [],
   "license": "BSD",
   "ignore": [

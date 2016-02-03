@@ -15,8 +15,8 @@ module.exports = function(grunt) {
                     findNestedDependencies: true,
                     baseUrl: 'src',
                     optimize: 'none',
-                    include: ['XElement.js'],
-                    out: 'XElement.js',
+                    include: ['Motherboard.js'],
+                    out: 'Motherboard.js',
                     wrap: {
                         start: '',
                         end: ''
@@ -40,7 +40,7 @@ module.exports = function(grunt) {
         uglify: {
             dist: {
                 files: {
-                    'XElement.min.js': ['XElement.js']
+                    'Motherboard.min.js': ['Motherboard.js']
                 }
             }
         }

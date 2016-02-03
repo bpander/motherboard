@@ -5,12 +5,12 @@
   } else if (typeof exports === 'object') {
     module.exports = factory();
   } else {
-    root['XElement'] = factory();
+    root['M'] = factory();
   }
 
 }(this, function () {
 
-var Listener, MediaDef, XElementMixin, utils_StringUtil, AttrDef, XElementjs;
+var Listener, MediaDef, MElementMixin, utils_StringUtil, AttrDef, Motherboardjs;
 Listener = function () {
   function Listener(target, type, handler) {
     this.target = target;
@@ -91,8 +91,8 @@ MediaDef = function () {
   };
   return MediaDef;
 }();
-XElementMixin = function (Listener, MediaDef) {
-  var XElementMixin = {
+MElementMixin = function (Listener, MediaDef) {
+  var MElementMixin = {
     customAttributes: [],
     createdCallback: function () {
       this.listeners = [];
@@ -194,7 +194,7 @@ XElementMixin = function (Listener, MediaDef) {
     }
     return arr;
   };
-  return XElementMixin;
+  return MElementMixin;
 }(Listener, MediaDef);
 utils_StringUtil = function () {
   var StringUtil = {};
@@ -341,21 +341,21 @@ AttrDef = function (StringUtil) {
   };
   return AttrDef;
 }(utils_StringUtil);
-XElementjs = function (XElementMixin, AttrDef) {
-  function XElement() {
+Motherboardjs = function (MElementMixin, AttrDef) {
+  function M() {
   }
-  XElement.attribute = function (name, params) {
+  M.attribute = function (name, params) {
     return new AttrDef(name, params);
   };
-  XElement.define = function (customTagName, definition) {
+  M.define = function (customTagName, definition) {
     var constructor = HTMLElement;
-    var base = Object.assign(Object.create(constructor.prototype), XElementMixin);
+    var base = Object.assign(Object.create(constructor.prototype), MElementMixin);
     var prototype = Object.create(base);
     Object.defineProperty(prototype, 'selector', { value: customTagName });
     definition(prototype, base);
     return _register(customTagName, { prototype: prototype });
   };
-  XElement.extend = function () {
+  M.extend = function () {
     if (typeof arguments[0] === 'string') {
       return _extendNative.apply(this, arguments);
     }
@@ -363,7 +363,7 @@ XElementjs = function (XElementMixin, AttrDef) {
   };
   var _extendNative = function (tagName, customTagName, definition) {
     var constructor = document.createElement(tagName).constructor;
-    var base = Object.assign(Object.create(constructor.prototype), XElementMixin);
+    var base = Object.assign(Object.create(constructor.prototype), MElementMixin);
     var prototype = Object.create(base);
     Object.defineProperty(prototype, 'selector', { value: tagName + '[is="' + customTagName + '"]' });
     definition(prototype, base);
@@ -399,12 +399,12 @@ XElementjs = function (XElementMixin, AttrDef) {
     // Register the custom element
     return document.registerElement(customTagName, options);
   };
-  XElement.setTag = function (element, tag) {
+  M.setTag = function (element, tag) {
     element.dataset.tag = tag;
   };
-  XElement.getTag = function (element) {
+  M.getTag = function (element) {
     return element.dataset.tag;
   };
-  return XElement;
-}(XElementMixin, AttrDef);    return XElementjs;
+  return M;
+}(MElementMixin, AttrDef);    return Motherboardjs;
 }));

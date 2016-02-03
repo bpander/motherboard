@@ -7,7 +7,7 @@ define([
 ) {
     'use strict';
 
-    var XElementMixin = {
+    var MElementMixin = {
 
         customAttributes: [],
 
@@ -136,5 +136,5 @@ define([
     };
 
 
-    return XElementMixin;
+    return MElementMixin;
 });

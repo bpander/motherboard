@@ -1,24 +1,24 @@
 define([
-    'XElementMixin',
+    'MElementMixin',
     'AttrDef',
 ], function (
-    XElementMixin,
+    MElementMixin,
     AttrDef
 ) {
     'use strict';
 
 
-    function XElement () {}
+    function M () {}
 
 
-    XElement.attribute = function (name, params) {
+    M.attribute = function (name, params) {
         return new AttrDef(name, params);
     };
 
 
-    XElement.define = function (customTagName, definition) {
+    M.define = function (customTagName, definition) {
         var constructor = HTMLElement;
-        var base = Object.assign(Object.create(constructor.prototype), XElementMixin);
+        var base = Object.assign(Object.create(constructor.prototype), MElementMixin);
         var prototype = Object.create(base);
         Object.defineProperty(prototype, 'selector', { value: customTagName });
         definition(prototype, base);
@@ -26,7 +26,7 @@ define([
     };
 
 
-    XElement.extend = function () {
+    M.extend = function () {
         if (typeof arguments[0] === 'string') {
             return _extendNative.apply(this, arguments);
         }
@@ -36,7 +36,7 @@ define([
 
     var _extendNative = function (tagName, customTagName, definition) {
         var constructor = document.createElement(tagName).constructor;
-        var base = Object.assign(Object.create(constructor.prototype), XElementMixin);
+        var base = Object.assign(Object.create(constructor.prototype), MElementMixin);
         var prototype = Object.create(base);
         Object.defineProperty(prototype, 'selector', { value: tagName + '[is="' + customTagName + '"]' });
         definition(prototype, base);
@@ -78,15 +78,15 @@ define([
     };
 
 
-    XElement.setTag = function (element, tag) {
+    M.setTag = function (element, tag) {
         element.dataset.tag = tag;
     };
 
 
-    XElement.getTag = function (element) {
+    M.getTag = function (element) {
         return element.dataset.tag;
     };
 
 
-    return XElement;
+    return M;
 });

@@ -1,23 +1,23 @@
 {
-  "name": "xelement",
-  "version": "0.0.1",
+  "name": "motherboard",
+  "version": "0.1.5",
   "description": "",
-  "main": "XElement.js",
+  "main": "Motherboard.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/banderso-n/xelement.git"
+    "url": "https://github.com/bpander/motherboard.git"
   },
-  "author": "",
+  "author": "Brad Anderson",
   "license": {
     "notValid": true
   },
   "bugs": {
-    "url": "https://github.com/banderso-n/xelement/issues"
+    "url": "https://github.com/bpander/motherboard/issues"
   },
-  "homepage": "https://github.com/banderso-n/xelement",
+  "homepage": "https://github.com/bpander/motherboard",
   "devDependencies": {
     "amdclean": "2.7.0",
     "grunt": "0.4.5",
