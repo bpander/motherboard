@@ -2,7 +2,7 @@ define(function () {
     'use strict';
 
 
-    function Binding (target, type, handler) {
+    function Listener (target, type, handler) {
 
         this.target = target;
 
@@ -15,7 +15,7 @@ define(function () {
     }
 
 
-    Binding.prototype.enable = function () {
+    Listener.prototype.enable = function () {
         if (this.isEnabled === true) {
             return;
         }
@@ -23,7 +23,7 @@ define(function () {
         if (this.target instanceof EventTarget) {
             this.target.addEventListener(this.type, this.handler);
 
-        } else if (this.target instanceof NodeList) {
+        } else if (this.target instanceof Array) {
             var i = this.target.length;
             while (--i > -1) {
                 this.target[i].addEventListener(this.type, this.handler);
@@ -33,11 +33,11 @@ define(function () {
     };
 
 
-    Binding.prototype.disable = function () {
+    Listener.prototype.disable = function () {
         if (this.target instanceof EventTarget) {
             this.target.removeEventListener(this.type, this.handler);
 
-        } else if (this.target instanceof NodeList) {
+        } else if (this.target instanceof Array) {
             var i = this.target.length;
             while (--i > -1) {
                 this.target[i].removeEventListener(this.type, this.handler);
@@ -47,5 +47,5 @@ define(function () {
     };
 
 
-    return Binding;
+    return Listener;
 });

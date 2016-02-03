@@ -1,8 +1,8 @@
 define([
-    'Binding',
+    'Listener',
     'MediaDef'
 ], function (
-    Binding,
+    Listener,
     MediaDef
 ) {
     'use strict';
@@ -13,7 +13,7 @@ define([
 
 
         createdCallback: function () {
-            this.bindings = [];
+            this.listeners = [];
             this.mediaDefs = this.customAttributes
                 .filter(function (x) { return x.responsive === true; })
                 .map(function (attrDef) {
@@ -93,27 +93,27 @@ define([
         },
 
 
-        createBinding: function (target, type, handler) {
-            var binding = new Binding(target, type, handler.bind(this));
-            this.bindings.push(binding);
-            return binding;
+        listen: function (target, type, handler) {
+            var listener = new Listener(target, type, handler.bind(this));
+            this.listeners.push(listener);
+            return listener;
         },
 
 
         enable: function () {
             var i;
-            var l = this.bindings.length;
+            var l = this.listeners.length;
             for (i = 0; i < l; i++) {
-                this.bindings[i].enable();
+                this.listeners[i].enable();
             }
         },
 
 
         disable: function () {
             var i;
-            var l = this.bindings.length;
+            var l = this.listeners.length;
             for (i = 0; i < l; i++) {
-                this.bindings[i].disable();
+                this.listeners[i].disable();
             }
         },
 

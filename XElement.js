@@ -10,21 +10,21 @@
 
 }(this, function () {
 
-var Binding, MediaDef, XElementMixin, utils_StringUtil, AttrDef, XElementjs;
-Binding = function () {
-  function Binding(target, type, handler) {
+var Listener, MediaDef, XElementMixin, utils_StringUtil, AttrDef, XElementjs;
+Listener = function () {
+  function Listener(target, type, handler) {
     this.target = target;
     this.type = type;
     this.handler = handler;
     this.isEnabled = false;
   }
-  Binding.prototype.enable = function () {
+  Listener.prototype.enable = function () {
     if (this.isEnabled === true) {
       return;
     }
     if (this.target instanceof EventTarget) {
       this.target.addEventListener(this.type, this.handler);
-    } else if (this.target instanceof NodeList) {
+    } else if (this.target instanceof Array) {
       var i = this.target.length;
       while (--i > -1) {
         this.target[i].addEventListener(this.type, this.handler);
@@ -32,10 +32,10 @@ Binding = function () {
     }
     this.isEnabled = true;
   };
-  Binding.prototype.disable = function () {
+  Listener.prototype.disable = function () {
     if (this.target instanceof EventTarget) {
       this.target.removeEventListener(this.type, this.handler);
-    } else if (this.target instanceof NodeList) {
+    } else if (this.target instanceof Array) {
       var i = this.target.length;
       while (--i > -1) {
         this.target[i].removeEventListener(this.type, this.handler);
@@ -43,7 +43,7 @@ Binding = function () {
     }
     this.isEnabled = false;
   };
-  return Binding;
+  return Listener;
 }();
 MediaDef = function () {
   function MediaDef(params) {
@@ -91,11 +91,11 @@ MediaDef = function () {
   };
   return MediaDef;
 }();
-XElementMixin = function (Binding, MediaDef) {
+XElementMixin = function (Listener, MediaDef) {
   var XElementMixin = {
     customAttributes: [],
     createdCallback: function () {
-      this.bindings = [];
+      this.listeners = [];
       this.mediaDefs = this.customAttributes.filter(function (x) {
         return x.responsive === true;
       }).map(function (attrDef) {
@@ -137,6 +137,7 @@ XElementMixin = function (Binding, MediaDef) {
         attrDef.mediaChangedCallback.call(this, oldEvaluatedProp, newEvaluatedProp);
       }
     },
+    // TODO: Maybe refactor element queries to use getElementsByTagName? http://jsperf.com/exhaustive-selector-performance-test
     getComponent: function (T, tag) {
       var selector = T.prototype.selector;
       if (tag !== undefined) {
@@ -157,23 +158,23 @@ XElementMixin = function (Binding, MediaDef) {
     findAllWithTag: function (tag) {
       return _nodeListToArray(this.querySelectorAll('[data-tag="' + tag + '"]'));
     },
-    createBinding: function (target, type, handler) {
-      var binding = new Binding(target, type, handler.bind(this));
-      this.bindings.push(binding);
-      return binding;
+    listen: function (target, type, handler) {
+      var listener = new Listener(target, type, handler.bind(this));
+      this.listeners.push(listener);
+      return listener;
     },
     enable: function () {
       var i;
-      var l = this.bindings.length;
+      var l = this.listeners.length;
       for (i = 0; i < l; i++) {
-        this.bindings[i].enable();
+        this.listeners[i].enable();
       }
     },
     disable: function () {
       var i;
-      var l = this.bindings.length;
+      var l = this.listeners.length;
       for (i = 0; i < l; i++) {
-        this.bindings[i].disable();
+        this.listeners[i].disable();
       }
     },
     trigger: function (type, detail) {
@@ -194,7 +195,7 @@ XElementMixin = function (Binding, MediaDef) {
     return arr;
   };
   return XElementMixin;
-}(Binding, MediaDef);
+}(Listener, MediaDef);
 utils_StringUtil = function () {
   var StringUtil = {};
   StringUtil.toCamelCase = function (str) {
