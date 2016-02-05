@@ -18,6 +18,7 @@ Motherboard is meant to be a foundation to build on. It doesn't force a specific
 
 Motherboard uses the [Custom Element API](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Custom_Elements) to directly tie an element to the UI component associated with it.
 
+#### JS
 ```js
 var MCarousel = M.element('m-carousel', function (proto, base) {
 
@@ -30,6 +31,7 @@ var MCarousel = M.element('m-carousel', function (proto, base) {
 });
 ```
 
+#### HTML
 ```html
 <m-carousel></m-carousel>
 ```
@@ -38,6 +40,7 @@ var MCarousel = M.element('m-carousel', function (proto, base) {
 
 Motherboard includes a custom attribute API for easy configuration.
 
+#### JS
 ```js
 var MCarousel = M.element('m-carousel', function (proto, base) {
 
@@ -57,11 +60,13 @@ var MCarousel = M.element('m-carousel', function (proto, base) {
 });
 ```
 
+#### HTML
 ```html
 <m-carousel id="one"></m-carousel>
 <m-carousel id="two" autoplay delay="5000"></m-carousel>
 ```
 
+#### JS
 ```js
 var one = document.getElementById('one');
 one.autoplay; // false
@@ -78,6 +83,7 @@ typeof one.delay; // "number"
 
 Attributes can be flagged as `responsive` if their values should change depending on browser state.
 
+#### JS
 ```js
 var MCarousel = M.element('m-carousel', function (proto, base) {
 
@@ -103,6 +109,7 @@ carousel.currentSlidesVisible; // `3` if the viewport is wider than 768px, other
 
 ### Normalized, Intuitive, and Performant DOM Querying
 
+#### JS
 ```js
 var MCarousel = M.element('m-carousel', function (proto, base) {
 
@@ -112,25 +119,30 @@ var MCarousel = M.element('m-carousel', function (proto, base) {
         // Gets the first child element with a matching `data-tag` attribute
         this.nextButton = this.findWithTag('m-carousel.nextButton');
 
-        // Gets all child elements with a matching `data-tag` attribute    
+        // Gets all child elements with a matching `data-tag` attribute
         this.slides = this.findAllWithTag('m-carousel.slides');
+
+        // Element collections are returned as arrays to make them easier to work with
+        this.slides instanceof Array; // true
 
     };
 });
 ```
 
+#### HTML
 ```html
 <m-carousel>
+    <button data-tag="m-carousel.nextButton">Next</button>
     <ul>
         <li data-tag="m-carousel.slides"></li>
         <li data-tag="m-carousel.slides"></li>
         <li data-tag="m-carousel.slides"></li>
     </ul>
-    <button data-tag="m-carousel.nextButton">Next</button>
 </m-carousel>
 ```
 **Note:** The {m-tag.propertyName} pattern isn't forced, it's just a convention I've found useful.
 
+#### JS
 ```js
 var MSlideshow = M.element('m-slideshow', function (proto, base) {
     
@@ -148,13 +160,122 @@ var MSlideshow = M.element('m-slideshow', function (proto, base) {
 
         // Gets all matching child elements of the specified type and tag
         this.carousels = this.getComponents(MCarousel, 'm-slideshow.carousel');
+
+        // Element collections are returned as arrays to make them easier to work with
+        this.carousels instanceof Array; // true
     };
 });
 ```
 
+#### HTML
 ```html
 <m-slideshow>
     <m-carousel></m-carousel>
     <m-carousel data-tag="m-slideshow.carousel"></m-carousel>
 </m-slideshow>
+```
+
+### Event Handling
+
+#### JS
+```js
+var MCarousel = M.element('m-carousel', function (proto, base) {
+    
+    proto.createdCallback = function () {
+        base.createdCallback.call(this);
+        ...
+        this.listen(this.nextButton, 'click', function (e) {
+            this.advance(1); // `this` keyword is bound to the specific element instance
+        });
+        this.listen(this.prevButton, 'click', function (e) {
+            this.advance(-1);
+        });
+        this.enable(); // Enables all listeners
+        this.disable(); // Disables all listeners
+
+        // `.listen` can be used with single elements or a collection of elements
+        this.dotsListener = this.listen(this.dots, 'click', function (e) {
+            var index = this.dots.indexOf(e.target);
+            this.goTo(index);
+        });
+        this.dotsListener.enable(); // Enable a specific listener
+        this.dotsListener.disable(); // Disable a specific listener
+    };
+});
+```
+
+### Triggering Events
+
+#### JS
+```js
+var MCarousel = M.element('m-carousel', function (proto, base) {
+
+    proto.advance = function (howMany) {
+        ...
+        this.trigger('slidechange', { previous: previous, current: current });
+    };
+});
+
+var carousel = new MCarousel();
+var listener = carousel.listen(carousel, 'foo', e => console.log(e.detail));
+carousel.enable();
+carousel.trigger('foo', { foo: 'bar' }); // logs `{ foo: 'bar' }`
+```
+
+## Advanced Usage
+
+### Upgrading Existing Elements
+
+### Cross-Module Communication
+
+Previously, I gave an example of cross-module communication that'd be difficult to pull off with the current landscape of frameworks: ajax-form in a modal that should cancel its current request if the modal is closed. This is some pseudocode to explain roughly how it'd be accomplished with Motherboard.
+
+#### HTML
+```html
+<m-ajax-modal>
+    <form is="m-ajax-form">
+    </form>
+</m-ajax-modal>
+```
+
+#### JS
+```js
+// Ajax-form definition
+var MAjaxForm = M.extend('form', 'm-ajax-form', function (proto, base) {
+
+    // Overwrites inherited HTMLFormElement#submit method
+    proto.submit = function () {
+        this.xhr = new XMLHttpRequest();
+        ...
+    };
+
+    proto.cancel = function () {
+        if (this.xhr !== null) {
+            this.xhr.abort();
+        }
+    };
+});
+
+
+// Base Modal definition
+var MModal = M.element('m-modal', function (proto, base) {
+    
+    proto.open = function () { ... };
+
+    proto.close = function () { ... };
+});
+
+
+// XHR-canceling Modal definition
+var MAjaxModal = M.extend(MModal, 'm-ajax-modal', function (proto, base) {
+
+    proto.createdCallback = function () {
+        this.ajaxForm = this.getComponent(MAjaxForm);
+    };
+
+    proto.close = function () {
+        base.close.call(this); // `super` call
+        this.ajaxForm.cancel();
+    };
+});
 ```
