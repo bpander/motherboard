@@ -10,7 +10,7 @@ Angular, React, and similar frameworks are primarily concerned with updating vie
 
 ### A Reaction Against Monolithic, Wheel-Reinventing Frameworks
 
-Motherboard is meant to be a foundation to build on. It doesn't force a specific router or templating engine on you (and if you don't need one, don't use one). You can use whatever components are appropriate for your project. If one stops being good, you can easily swap it out for a different (better) one. This also helps keep page-weight down. This [TodoMVC app using Motherboard](http://bpander.github.io/motherboard-todos/) is only **7.3 KB** of JavaScript (gzipped and minified). By comparison, the AngularJS core gzipped and minified (just the framework) is 45 KB.
+Motherboard is meant to be a foundation to build on. It doesn't force a specific router, templating engine, etc. on you. You can use whatever components are appropriate for your project. If one stops being good, you can easily swap it out for a different (better) one. This also helps keep page-weight down. This [TodoMVC app using Motherboard](http://bpander.github.io/motherboard-todos/) is only **7.3 KB** of JavaScript (gzipped and minified). By comparison, the AngularJS core gzipped and minified (the framework alone) is 45 KB.
 
 ## Usage
 
@@ -104,7 +104,7 @@ var MCarousel = M.element('m-carousel', function (proto, base) {
 
 var carousel = new MCarousel();
 carousel.slidesVisible; // "(min-width: 768px) 3, 1"
-carousel.currentSlidesVisible; // `3` if the viewport is wider than 768px, otherwise `1`
+carousel.currentSlidesVisible; // `3` if the viewport is 768px or wider, otherwise `1`
 ```
 
 ### Normalized, Intuitive, and Performant DOM Querying
@@ -187,6 +187,14 @@ var MSlideshow = M.element('m-slideshow', function (proto, base) {
 
 **JS**
 ```js
+// Basic example
+var carousel = new MCarousel();
+carousel.listen(carousel, 'click', function () {
+    console.log('click detected');
+});
+carousel.enable();
+
+// Slightly more complex example
 var MCarousel = M.element('m-carousel', function (proto, base) {
     
     proto.createdCallback = function () {
@@ -244,6 +252,27 @@ var MCarousel = M.element('m-carousel', function (proto, base) {
 
 ### Upgrading Existing Elements
 
+#### HTML
+```html
+<form is="m-ajax-form"></form>
+```
+
+#### JS
+```js
+var MAjaxForm = M.extend('form', 'm-ajax-form', function (proto, base) {
+    ...
+});
+```
+
+### Extending Existing "M" Elements
+
+#### JS
+```js
+var MVideoModal = M.extend(MModal, 'm-video-modal', function (proto, base) {
+    ...
+});
+```
+
 ### Cross-Module Communication
 
 Previously, I gave an example of cross-module communication that'd be difficult to pull off with the current landscape of frameworks: an ajax-form in a modal that should cancel its current request if the modal is closed. This is some pseudocode to explain roughly how it'd be accomplished with Motherboard.
@@ -258,33 +287,6 @@ Previously, I gave an example of cross-module communication that'd be difficult 
 
 **JS**
 ```js
-// Ajax-form definition
-var MAjaxForm = M.extend('form', 'm-ajax-form', function (proto, base) {
-
-    // Overwrites inherited HTMLFormElement#submit method
-    proto.submit = function () {
-        this.xhr = new XMLHttpRequest();
-        ...
-    };
-
-    proto.cancel = function () {
-        if (this.xhr !== null) {
-            this.xhr.abort();
-        }
-    };
-});
-
-
-// Base Modal definition
-var MModal = M.element('m-modal', function (proto, base) {
-    
-    proto.open = function () { ... };
-
-    proto.close = function () { ... };
-});
-
-
-// XHR-canceling Modal definition
 var MAjaxModal = M.extend(MModal, 'm-ajax-modal', function (proto, base) {
 
     proto.createdCallback = function () {
