@@ -6,17 +6,17 @@ Motherboard is a small (less than 3k gzipped), extensible foundation for client-
 
 ### Address Complex UI Behaviors
 
-Angular, React, and similar frameworks are primarily concerned with updating views as data changes. A common problem encountered when building web apps is communicating between components, e.g. an ajax-form in a modal that should cancel its current request if the modal is closed. Motherboard makes it easy to implement an architecture to handle cross-module communication. 
+Angular, React, and similar frameworks are primarily concerned with updating views as data changes. But a common problem encountered when building web apps they don't directly address is communicating between components, e.g. an ajax-form in a modal that should cancel its current request if the modal is closed. Motherboard aims to be a tool to make these kinds of complex UI behaviors easier to build and maintain.
 
 ### A Reaction Against Monolithic, Wheel-Reinventing Frameworks
 
-Motherboard is meant to be a foundation to build on. It doesn't force a specific router, templating engine, etc. on you. You can use whatever components are appropriate for your project. If one stops being good, you can easily swap it out for a different (better) one. This also helps keep page-weight down. This [TodoMVC app using Motherboard](http://bpander.github.io/motherboard-todos/) is only **7.3 KB** of JavaScript (gzipped and minified). By comparison, the AngularJS core gzipped and minified (the framework alone) is 45 KB.
+Motherboard is meant to be a foundation to build on. It doesn't force a specific router, templating engine, etc. on you. You can use whatever components are appropriate for your project. If one stops being good, you can easily swap it out for a different (better) one. This also helps keep page-weight down. This <a href="http://bpander.github.io/motherboard-todos/" target="_blank">TodoMVC app using Motherboard</a> is only **7.3 KB** of JavaScript (gzipped and minified). By comparison, the AngularJS framework alone is 45 KB (gzipped and minified).
 
 ## Usage
 
 ### Custom Elements
 
-Motherboard uses the [Custom Element API](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Custom_Elements) to directly tie an element to the UI component associated with it.
+Motherboard uses the <a href="https://developer.mozilla.org/en-US/docs/Web/Web_Components/Custom_Elements">Custom Element API</a> to directly tie an element to the UI component it represents.
 
 **HTML**
 ```html
@@ -40,7 +40,7 @@ var MCarousel = M.element('m-carousel', function (proto, base) {
 
 Motherboard includes a custom attribute API for easy configuration.
 
-**JS**
+**Defining custom attributes**
 ```js
 var MCarousel = M.element('m-carousel', function (proto, base) {
 
@@ -54,28 +54,37 @@ var MCarousel = M.element('m-carousel', function (proto, base) {
             changedCallback: function (oldVal, newVal) {
                 // I'll fire whenever the 'delay' attribute/property is changed
             }
-        });
+        }),
+
+        M.attribute('easing', {
+            type: String,
+            default: 'ease-out'
+        })
 
     );
 });
 ```
 
-**HTML**
 ```html
-<m-carousel id="one"></m-carousel>
-<m-carousel id="two" autoplay delay="5000"></m-carousel>
+<m-carousel></m-carousel>
 ```
 
-**JS**
 ```js
-var one = document.getElementById('one');
-one.autoplay; // false
-one.delay; // 3000
+var carousel = document.getElementsByTagName('m-carousel')[0];
+carousel.autoplay; // false
+carousel.delay; // 3000
+carousel.easing; // "ease-out"
+```
 
-var two = document.getElementById('two');
-two.autoplay; // true
-two.delay; // 5000
-typeof one.delay; // "number"
+```html
+<m-carousel autoplay delay="5000" easing="linear"></m-carousel>
+```
+
+```js
+var carousel = document.getElementsByTagName('m-carousel')[0];
+carousel.autoplay; // true
+carousel.delay; // 5000
+carousel.easing; // "linear"
 ```
 
 
@@ -83,7 +92,6 @@ typeof one.delay; // "number"
 
 Attributes can be flagged as `responsive` if their values should change depending on the current media.
 
-**JS**
 ```js
 var MCarousel = M.element('m-carousel', function (proto, base) {
 
@@ -101,7 +109,9 @@ var MCarousel = M.element('m-carousel', function (proto, base) {
     );
 
 });
+```
 
+```js
 var carousel = new MCarousel();
 carousel.slidesVisible; // "(min-width: 768px) 3, 1"
 carousel.currentSlidesVisible; // `3` if the viewport is 768px or wider, otherwise `1`
@@ -109,46 +119,41 @@ carousel.currentSlidesVisible; // `3` if the viewport is 768px or wider, otherwi
 
 ### Normalized, Intuitive, and Performant DOM Querying
 
-#### Querying random elements
+**Use .findWithTag to get one specific tagged element**
 
-**HTML**
 ```html
 <m-carousel>
-    <button data-tag="m-carousel.nextButton">Next</button>
+    <button class="btn btn_round" data-tag="foo">Next</button>
+</m-carousel>
+```
+
+```js
+// Get only the first child element with a matching `data-tag` attribute
+var nextButton = carousel.findWithTag('foo');
+```
+
+**Use .findAllWithTag to get all elements with the specified tag**
+```html
+<m-carousel>
     <ul>
-        <li data-tag="m-carousel.slides"></li>
-        <li data-tag="m-carousel.slides"></li>
-        <li data-tag="m-carousel.slides"></li>
+        <li data-tag="slide"></li>
+        <li data-tag="slide"></li>
+        <li data-tag="slide"></li>
     </ul>
 </m-carousel>
 ```
-**Note:** The {m-tag.propertyName} pattern isn't forced, it's just a useful convention.
 
-**JS**
 ```js
-var MCarousel = M.element('m-carousel', function (proto, base) {
+// Get all child elements with a matching `data-tag` attribute
+var slides = carousel.findAllWithTag('slide');
 
-    proto.createdCallback = function () {
-        base.createdCallback.call(this);
-
-        // Gets the first child element with a matching `data-tag` attribute
-        this.nextButton = this.findWithTag('m-carousel.nextButton');
-
-        // Gets all child elements with a matching `data-tag` attribute
-        this.slides = this.findAllWithTag('m-carousel.slides');
-
-        // Element collections are returned as arrays to make them easier to work with
-        this.slides.forEach(function (slide) {
-            ...
-        });
-
-    };
+// Element collections are returned as arrays to make them easier to work with
+slides.forEach(function (slide) {
+    ...
 });
 ```
 
-#### Querying for a specific type
-
-**HTML**
+**Use .getComponent(s) when you're looking for a specific type**
 ```html
 <m-slideshow>
     <m-carousel></m-carousel>
@@ -156,23 +161,22 @@ var MCarousel = M.element('m-carousel', function (proto, base) {
 </m-slideshow>
 ```
 
-**JS**
 ```js
 var MSlideshow = M.element('m-slideshow', function (proto, base) {
     
     proto.createdCallback = function () {
         base.createdCallback.call(this);
 
-        // Gets the first child element of the specified type
+        // Get the first child element of the specified type
         this.carousel = this.getComponent(MCarousel);
 
-        // Gets the first child element of the specified type and tag
+        // Get the first child element of the specified type and tag
         this.carousel = this.getComponent(MCarousel, 'm-slideshow.carousel');
 
-        // Gets all matching child elements of the specified type
+        // Get all matching child elements of the specified type
         this.carousels = this.getComponents(MCarousel);
 
-        // Gets all matching child elements of the specified type and tag
+        // Get all matching child elements of the specified type and tag
         this.carousels = this.getComponents(MCarousel, 'm-slideshow.carousel');
 
         // Element collections are returned as arrays to make them easier to work with
@@ -182,19 +186,22 @@ var MSlideshow = M.element('m-slideshow', function (proto, base) {
     };
 });
 ```
+**Note:** The {m-tag.propertyName} pattern isn't forced, it's just a useful convention.
+
 
 ### Event Handling
 
-**JS**
+**A basic example**
 ```js
-// Basic example
 var carousel = new MCarousel();
 carousel.listen(carousel, 'click', function () {
     console.log('click detected');
 });
 carousel.enable();
+```
 
-// Slightly more complex example
+**A slightly more complex example**
+```js
 var MCarousel = M.element('m-carousel', function (proto, base) {
     
     proto.createdCallback = function () {
@@ -219,22 +226,28 @@ var MCarousel = M.element('m-carousel', function (proto, base) {
 
 ### Triggering Events
 
-**JS**
+"M" elements use the <a href="https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent" target="_blank">CustomEvent API</a>, but with some helpful convenience methods.
+
+**A basic example**
 ```js
-// Basic example
 var carousel = new MCarousel();
 var listener = carousel.listen(carousel, 'foo', e => console.log(e.detail));
 carousel.enable();
 carousel.trigger('foo', { foo: 'bar' }); // logs `{ foo: 'bar' }`
+```
 
-// Anoter basic example
+**Another basic example**
+```js
+// Custom events bubble
 document.body.addEventListener('foo', function (e) {
     console.log(e.target);
 });
 document.body.appendChild(carousel);
 carousel.trigger('foo'); // logs the <m-carousel> element to the console
+```
 
-// Slightly more complex example
+**A slightly more complex example**
+```js
 var MCarousel = M.element('m-carousel', function (proto, base) {
 
     proto.EVENT = {
@@ -252,12 +265,10 @@ var MCarousel = M.element('m-carousel', function (proto, base) {
 
 ### Upgrading Existing Elements
 
-#### HTML
 ```html
 <form is="m-ajax-form"></form>
 ```
 
-#### JS
 ```js
 var MAjaxForm = M.extend('form', 'm-ajax-form', function (proto, base) {
     ...
@@ -266,7 +277,6 @@ var MAjaxForm = M.extend('form', 'm-ajax-form', function (proto, base) {
 
 ### Extending Existing "M" Elements
 
-#### JS
 ```js
 var MVideoModal = M.extend(MModal, 'm-video-modal', function (proto, base) {
     ...
