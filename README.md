@@ -16,7 +16,7 @@ Motherboard is meant to be a foundation to build on. It doesn't force a specific
 
 ### Custom Elements
 
-Motherboard uses the <a href="https://developer.mozilla.org/en-US/docs/Web/Web_Components/Custom_Elements">Custom Element API</a> to directly tie an element to the UI component it represents.
+Motherboard uses the <a href="https://developer.mozilla.org/en-US/docs/Web/Web_Components/Custom_Elements" target="_blank">Custom Element API</a> to directly tie an element to the UI component it represents.
 
 **HTML**
 ```html
@@ -300,6 +300,7 @@ Previously, I gave an example of cross-module communication that'd be difficult 
 var MAjaxModal = M.extend(MModal, 'm-ajax-modal', function (proto, base) {
 
     proto.createdCallback = function () {
+        base.createdCallback.call(this);
         this.ajaxForm = this.getComponent(MAjaxForm);
     };
 
