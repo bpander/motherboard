@@ -6,7 +6,7 @@ Motherboard is a small (less than 3k gzipped), extensible foundation for client-
 
 ### Address Complex UI Behaviors
 
-Angular, React, and similar frameworks are primarily concerned with updating views as data changes. But a common problem encountered when building web apps they don't directly address is communicating between components, e.g. an ajax-form in a modal that should cancel its current request if the modal is closed. Motherboard aims to be a tool to make these kinds of complex UI behaviors easier to build and maintain.
+Angular, React, and similar frameworks are primarily concerned with updating views as data changes. But a common problem encountered when building web apps they don't directly address is communicating between components, e.g. an async-form in a modal that should cancel its current request if the modal is closed. Motherboard aims to be a tool to make these kinds of complex UI behaviors easier to build and maintain.
 
 ### A Reaction Against Monolithic, Wheel-Reinventing Frameworks
 
@@ -264,11 +264,11 @@ var MCarousel = M.element('m-carousel', function (proto, base) {
 ### Upgrading Existing Elements
 
 ```html
-<form is="m-ajax-form"></form>
+<form is="m-async-form"></form>
 ```
 
 ```js
-var MAjaxForm = M.extend('form', 'm-ajax-form', function (proto, base) {
+var MAsyncForm = M.extend('form', 'm-async-form', function (proto, base) {
     ...
 });
 ```
@@ -283,28 +283,32 @@ var MVideoModal = M.extend(MModal, 'm-video-modal', function (proto, base) {
 
 ### Cross-Module Communication
 
-Previously, I gave an example of cross-module communication that'd be difficult to pull off with the current landscape of frameworks: an ajax-form in a modal that should cancel its current request if the modal is closed. This is some pseudocode to explain roughly how it'd be accomplished with Motherboard.
+Previously, I gave an example of cross-module communication that'd be difficult to pull off with the current landscape of frameworks: an async-form in a modal that should cancel its current request if the modal is closed. This is some pseudocode to explain roughly how it'd be accomplished with Motherboard.
 
 **HTML**
 ```html
-<m-ajax-modal>
-    <form is="m-ajax-form">
-    </form>
-</m-ajax-modal>
+<m-async-mediator>
+    <m-modal>
+        <form is="m-async-form">
+        </form>
+    </m-modal>
+</m-async-mediator>
 ```
 
 **JS**
 ```js
-var MAjaxModal = M.extend(MModal, 'm-ajax-modal', function (proto, base) {
+var MAsyncMediator = M.element('m-async-mediator', function (proto, base) {
 
     proto.createdCallback = function () {
         base.createdCallback.call(this);
-        this.ajaxForm = this.getComponent(MAjaxForm);
+
+        this.modal = this.getComponent(MModal);
+
+        this.asyncForm = this.getComponent(MAsyncForm);
+
+        this.listen(this.modal, 'close', () => this.asyncForm.cancel() );
+        this.enable();
     };
 
-    proto.close = function () {
-        base.close.call(this); // `super` call
-        this.ajaxForm.cancel();
-    };
 });
 ```
