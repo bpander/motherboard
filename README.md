@@ -20,12 +20,12 @@ Motherboard uses the <a href="https://developer.mozilla.org/en-US/docs/Web/Web_C
 
 **HTML**
 ```html
-<m-carousel></m-carousel>
+<m-tabpanel></m-tabpanel>
 ```
 
 **JS**
 ```js
-var MCarousel = M.element('m-carousel', function (proto, base) {
+var MTabPanel = M.element('m-tabpanel', function (proto, base) {
 
     // All the lifecycle callbacks are exposed
     proto.createdCallback = function () {
@@ -122,33 +122,31 @@ carousel.currentSlidesVisible; // `3` if the viewport is 768px or wider, otherwi
 **Use .findWithTag to get one specific tagged element**
 
 ```html
-<m-carousel>
-    <button class="btn btn_round" data-tag="foo">Next</button>
-</m-carousel>
+<m-modal>
+    <button class="btn btn_round" data-tag="close">Close</button>
+</m-modal>
 ```
 
 ```js
 // Get only the first child element with a matching `data-tag` attribute
-var nextButton = carousel.findWithTag('foo');
+var closeButton = modal.findWithTag('close');
 ```
 
 **Use .findAllWithTag to get all elements with the specified tag**
 ```html
-<m-carousel>
-    <ul>
-        <li data-tag="slide"></li>
-        <li data-tag="slide"></li>
-        <li data-tag="slide"></li>
-    </ul>
-</m-carousel>
+<m-tabpanel>
+    <button data-tag="tab">Section 1</button>
+    <button data-tag="tab">Section 2</button>
+    <button data-tag="tab">Section 3</button>
+</m-tabpanel>
 ```
 
 ```js
 // Get all child elements with a matching `data-tag` attribute
-var slides = carousel.findAllWithTag('slide');
+var tabs = tabpanel.findAllWithTag('tab');
 
 // Element collections are returned as arrays to make them easier to work with
-slides.forEach(function (slide) {
+tabs.forEach(function (tab) {
     ...
 });
 ```
@@ -193,11 +191,11 @@ var MSlideshow = M.element('m-slideshow', function (proto, base) {
 
 **A basic example**
 ```js
-var carousel = new MCarousel();
-carousel.listen(carousel, 'click', function () {
+var accordion = new MAccordion();
+accordion.listen(accordion, 'click', function () {
     console.log('click detected');
 });
-carousel.enable();
+accordion.enable();
 ```
 
 **A slightly more complex example**
