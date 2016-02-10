@@ -32,7 +32,7 @@ define(function () {
         }, this);
         this.mqls = [];
 
-        if (document.contains(this.element) === false) {
+        if (document.body.contains(this.element) === false) {
             return;
         }
 

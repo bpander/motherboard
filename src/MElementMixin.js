@@ -47,7 +47,7 @@ define([
             attrDef.changedCallback.call(this, oldVal, newVal);
 
             var mediaDef = this.mediaDefs.find(function (x) { return x.attrDef === attrDef; });
-            if (mediaDef === undefined || document.contains(this) === false) {
+            if (mediaDef === undefined || document.body.contains(this) === false) {
                 return;
             }
 

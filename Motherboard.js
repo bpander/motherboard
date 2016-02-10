@@ -67,7 +67,7 @@ MediaDef = function () {
       mql.removeListener(this.listener);
     }, this);
     this.mqls = [];
-    if (document.contains(this.element) === false) {
+    if (document.body.contains(this.element) === false) {
       return;
     }
     var prop = this.attrDef.getPropertyName();
@@ -126,7 +126,7 @@ MElementMixin = function (Listener, MediaDef) {
       var mediaDef = this.mediaDefs.find(function (x) {
         return x.attrDef === attrDef;
       });
-      if (mediaDef === undefined || document.contains(this) === false) {
+      if (mediaDef === undefined || document.body.contains(this) === false) {
         return;
       }
       mediaDef.update();
