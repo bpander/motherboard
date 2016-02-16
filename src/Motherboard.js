@@ -1,6 +1,7 @@
 define([
     'MElementMixin',
     'AttrDef',
+    'polyfills/Object.assign'
 ], function (
     MElementMixin,
     AttrDef
