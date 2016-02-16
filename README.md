@@ -18,6 +18,8 @@ Motherboard can be polyfilled to work back to IE9. Check the <a href="#polyfill-
 
 ## Usage
 
+`bower install motherboard`
+
 ### Custom Elements
 
 Motherboard uses the <a href="https://developer.mozilla.org/en-US/docs/Web/Web_Components/Custom_Elements" target="_blank">Custom Element API</a> to directly tie an element to the UI component it represents.
@@ -319,10 +321,12 @@ var MAsyncMediator = M.element('m-async-mediator', function (proto, base) {
 
 ## Polyfill Table
 
-Motherboard uses APIs that aren't implemented in older browsers. While it can be polyfilled to work in IE9, each project has its own level browser support. Therefore, all polyfills are included in the Motherboard package, but I leave it up to you to decide which ones to include.
+Motherboard uses APIs that aren't implemented in older browsers. While it can be polyfilled to work in IE9, desired browser support varies on a project to project basis. Therefore, all polyfills are included in the bower install, but it's left to your discretion which ones to include (if any).
 
-Polyfill Table coming soon.
+|                                         | IE9       | IE10      | IE11      | Edge 20   | Safari 9  | Firefox 44    | Chrome 48   |
+| ---                                     | :---:     | :---:     | :---:     | :---:     | :---:     | :---:         | :---:       |
+| *webcomponentsjs/CustomElements.js      | Required  | Required  | Required  | Required  | Required  | Required      | -           |
+| *matchMedia/matchMedia.js               | Required  | -         | -         | -         | -         | -             | -           |
+| *matchMedia/matchMedia.addListener.js   | Required  | -         | -         | -         | -         | -             | -           |
 
-Script example.
-
-RequireJS example.
+<small>* - These will download to the bower directory when installing Motherboard via bower.</small>
