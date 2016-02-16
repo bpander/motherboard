@@ -11,6 +11,7 @@ define(function (require) {
             M.attribute('slides-visible', {
                 type: Number,
                 responsive: true,
+                default: '1',
                 mediaChangedCallback: function (oldVal, newVal) {
                     console.log('mediaChangedCallback', oldVal, newVal);
                 },
