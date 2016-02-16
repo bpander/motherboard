@@ -92,6 +92,23 @@ MediaDef = function () {
   return MediaDef;
 }();
 MElementMixin = function (Listener, MediaDef) {
+  /**
+   * This works the same way as Array.prototype.find but without the bloat of the entire polyfill.
+   * 
+   * @param  {Array}      arr         The array to search.
+   * @param  {Function}   predicate   A predicate function.
+   * @return {*}  The element in the array that caused the predicate to return true or `undefined` if no match.
+   */
+  var _find = function (arr, predicate) {
+    var match;
+    arr.some(function (el, i, arr) {
+      if (predicate(el, i, arr)) {
+        match = el;
+        return true;
+      }
+    });
+    return match;
+  };
   var MElementMixin = {
     customAttributes: [],
     createdCallback: function () {
@@ -116,14 +133,14 @@ MElementMixin = function (Listener, MediaDef) {
       });
     },
     attributeChangedCallback: function (attrName, oldVal, newVal) {
-      var attrDef = this.customAttributes.find(function (x) {
+      var attrDef = _find(this.customAttributes, function (x) {
         return x.name === attrName;
       });
       if (attrDef === undefined) {
         return;
       }
       attrDef.changedCallback.call(this, oldVal, newVal);
-      var mediaDef = this.mediaDefs.find(function (x) {
+      var mediaDef = _find(this.mediaDefs, function (x) {
         return x.attrDef === attrDef;
       });
       if (mediaDef === undefined || document.body.contains(this) === false) {

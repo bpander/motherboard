@@ -21,28 +21,29 @@
         <script>
             require.config({
                 paths: {
-                    motherboard: '../Motherboard'
+                    motherboard: '../Motherboard',
+                    matchMedia: '../bower_components/matchMedia/matchMedia',
+                    'matchMedia.addListener': '../bower_components/matchMedia/matchMedia.addListener'
                 },
                 // This illustrates all polyfills being required.
                 // You'd only do this if you need IE9 browser support.
                 // Check the compatibility table to see which polyfills are right for your project.
-                // https://github.com/bpander/motherboard
+                // https://github.com/bpander/motherboard#polyfill-table
                 shim: {
                     motherboard: {
                         deps: [
                             '../bower_components/matchMedia/matchMedia',
                             '../bower_components/matchMedia/matchMedia.addListener',
                             '../bower_components/webcomponentsjs/CustomElements.min',
-                            '../polyfills/Object.assign',
-                            '../polyfills/Array.prototype.find'
+                            '../polyfills/Object.assign'
                         ]
                     },
-                    '../bower_components/matchMedia/matchMedia.addListener': {
+                    'matchMedia.addListener': {
                         deps: [
-                            '../bower_components/matchMedia/matchMedia'
+                            'matchMedia'
                         ]
                     }
-                },
+                }
             });
             require(['main']);
         </script>
