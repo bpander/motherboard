@@ -12,6 +12,10 @@ Angular, React, and similar frameworks are primarily concerned with updating vie
 
 Motherboard is meant to be a foundation to build on. It doesn't force a specific router, templating engine, etc. on you. You can use whatever components are appropriate for your project. If one stops being good, you can easily swap it out for a different (better) one. This also helps keep page-weight down. This <a href="http://bpander.github.io/motherboard-todos/" target="_blank">TodoMVC app using Motherboard</a> is only **7.3 KB** of JavaScript (gzipped and minified). By comparison, the AngularJS framework alone is 45 KB (gzipped and minified).
 
+## Browser support
+
+Motherboard can be polyfilled to work back to IE9. Check the <a href="#polyfill-table">Polyfill Table</a> to see which polyfills to use for your project (if any).
+
 ## Usage
 
 ### Custom Elements
@@ -312,3 +316,13 @@ var MAsyncMediator = M.element('m-async-mediator', function (proto, base) {
 
 });
 ```
+
+## Polyfill Table
+
+Motherboard uses APIs that aren't implemented in older browsers. While it can be polyfilled to work in IE9, each project has its own level browser support. Therefore, all polyfills are included in the Motherboard package, but I leave it up to you to decide which ones to include.
+
+Polyfill Table coming soon.
+
+Script example.
+
+RequireJS example.
