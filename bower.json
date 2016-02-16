@@ -17,9 +17,11 @@
     "src",
     "Gruntfile.js"
   ],
-  "devDependencies": {
-    "requirejs": "2.1.22",
+  "dependencies": {
     "webcomponentsjs": "0.7.20",
     "matchMedia": "matchmedia#0.3.0"
+  },
+  "devDependencies": {
+    "requirejs": "2.1.22"
   }
 }
