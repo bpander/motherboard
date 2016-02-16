@@ -1,6 +1,7 @@
 <!doctype html>
 <html>
     <head>
+        <meta charset="UTF-8" />
         <title>Motherboard tests</title>
     </head>
     <body>
@@ -21,7 +22,27 @@
             require.config({
                 paths: {
                     motherboard: '../Motherboard'
-                }
+                },
+                // This illustrates all polyfills being required.
+                // You'd only do this if you need IE9 browser support.
+                // Check the compatibility table to see which polyfills are right for your project.
+                // https://github.com/bpander/motherboard
+                shim: {
+                    motherboard: {
+                        deps: [
+                            '../bower_components/matchMedia/matchMedia',
+                            '../bower_components/matchMedia/matchMedia.addListener',
+                            '../bower_components/webcomponentsjs/CustomElements.min',
+                            '../polyfills/Object.assign',
+                            '../polyfills/Array.prototype.find'
+                        ]
+                    },
+                    '../bower_components/matchMedia/matchMedia.addListener': {
+                        deps: [
+                            '../bower_components/matchMedia/matchMedia'
+                        ]
+                    }
+                },
             });
             require(['main']);
         </script>

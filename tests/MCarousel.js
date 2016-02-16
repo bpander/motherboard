@@ -13,6 +13,9 @@ define(function (require) {
                 responsive: true,
                 mediaChangedCallback: function (oldVal, newVal) {
                     console.log('mediaChangedCallback', oldVal, newVal);
+                },
+                changedCallback: function (oldVal, newVal) {
+                    console.log('changedCallback', oldVal, newVal);
                 }
             })
 
