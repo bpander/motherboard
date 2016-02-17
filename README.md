@@ -10,7 +10,7 @@ Angular, React, and similar frameworks are primarily concerned with updating vie
 
 ### A Reaction Against Monolithic, Wheel-Reinventing Frameworks
 
-Motherboard is meant to be a foundation to build on. It doesn't force a specific router, templating engine, etc. on you. You can use whatever components are appropriate for your project. If one stops being good, you can easily swap it out for a different (better) one. This also helps keep page-weight down. This <a href="http://bpander.github.io/motherboard-todos/" target="_blank">TodoMVC app using Motherboard</a> is only **7.3 KB** of JavaScript (gzipped and minified). By comparison, the AngularJS framework alone is 45 KB (gzipped and minified).
+Motherboard is meant to be a foundation to build on. It doesn't force a specific router, templating engine, etc. on you. You can use whatever components are appropriate for your project. If one stops being good, you can easily swap it out for a different (better) one. This also helps keep page-weight down. This entire <a href="http://bpander.github.io/motherboard-todos/" target="_blank">TodoMVC app using Motherboard</a> is only **7.5 KB** of JavaScript (gzipped and minified). By comparison, the AngularJS framework alone is 45 KB (gzipped and minified).
 
 ## Browser support
 
