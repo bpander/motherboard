@@ -1,6 +1,7 @@
 define([
     'Listener',
-    'MediaDef'
+    'MediaDef',
+    'polyfills/Object.assign'
 ], function (
     Listener,
     MediaDef
@@ -137,8 +138,22 @@ define([
         },
 
 
-        trigger: function (type, detail) {
-            var e = new CustomEvent(type, { detail: detail, bubbles: true });
+        /**
+         * Convenience method for triggering custom events with the CustomEvent API. By default, events triggered with this method will bubble and are cancelable. These attributes can be overwritten via the optional `eventInit` argument.
+         *
+         * @method trigger
+         * @param  {String} type        The event type, e.g. 'beforechange'
+         * @param  {Object} [detail]    Optional. Additional data to send with the event (sets the `detail` property of the CustomEvent).
+         * @param  {Object} [eventInit] Optional. Overwrites Event attributes e.g. bubbles, cancelable.
+         * @return {Boolean}  Returns the value of the Element#dispatch call, i.e. returns `false` if cancelled, otherwise `true`.
+         */
+        trigger: function (type, detail, eventInit) {
+            eventInit = Object.assign({
+                detail: detail,
+                bubbles: true,
+                cancelable: true
+            }, eventInit);
+            var e = new CustomEvent(type, eventInit);
             return this.dispatchEvent(e);
         }
 

@@ -30,7 +30,8 @@ define(function (require) {
 
 
         proto.submit = function () {
-            console.log('submit');
+            var cancelled = !this.trigger('beforesubmit');
+            console.log('beforesubmit cancelled?', cancelled);
         };
 
     });

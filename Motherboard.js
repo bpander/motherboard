@@ -10,7 +10,7 @@
 
 }(this, function () {
 
-var Listener, MediaDef, MElementMixin, utils_StringUtil, AttrDef, polyfills_Objectassign, Motherboardjs;
+var Listener, MediaDef, polyfills_Objectassign, MElementMixin, utils_StringUtil, AttrDef, Motherboardjs;
 Listener = function () {
   function Listener(target, type, handler) {
     this.target = target;
@@ -91,6 +91,29 @@ MediaDef = function () {
   };
   return MediaDef;
 }();
+if (typeof Object.assign != 'function') {
+  (function () {
+    Object.assign = function (target) {
+      'use strict';
+      if (target === undefined || target === null) {
+        throw new TypeError('Cannot convert undefined or null to object');
+      }
+      var output = Object(target);
+      for (var index = 1; index < arguments.length; index++) {
+        var source = arguments[index];
+        if (source !== undefined && source !== null) {
+          for (var nextKey in source) {
+            if (source.hasOwnProperty(nextKey)) {
+              output[nextKey] = source[nextKey];
+            }
+          }
+        }
+      }
+      return output;
+    };
+  }());
+}
+polyfills_Objectassign = undefined;
 MElementMixin = function (Listener, MediaDef) {
   /**
    * This works the same way as Array.prototype.find but without the bloat of the entire polyfill.
@@ -194,11 +217,22 @@ MElementMixin = function (Listener, MediaDef) {
         this.listeners[i].disable();
       }
     },
-    trigger: function (type, detail) {
-      var e = new CustomEvent(type, {
+    /**
+     * Convenience method for triggering custom events with the CustomEvent API. By default, events triggered with this method will bubble and are cancelable. These attributes can be overwritten via the optional `eventInit` argument.
+     *
+     * @method trigger
+     * @param  {String} type        The event type, e.g. 'beforechange'
+     * @param  {Object} [detail]    Optional. Additional data to send with the event (sets the `detail` property of the CustomEvent).
+     * @param  {Object} [eventInit] Optional. Overwrites Event attributes e.g. bubbles, cancelable.
+     * @return {Boolean}  Returns the value of the Element#dispatch call, i.e. returns `false` if cancelled, otherwise `true`.
+     */
+    trigger: function (type, detail, eventInit) {
+      eventInit = Object.assign({
         detail: detail,
-        bubbles: true
-      });
+        bubbles: true,
+        cancelable: true
+      }, eventInit);
+      var e = new CustomEvent(type, eventInit);
       return this.dispatchEvent(e);
     }
   };
@@ -358,29 +392,6 @@ AttrDef = function (StringUtil) {
   };
   return AttrDef;
 }(utils_StringUtil);
-if (typeof Object.assign != 'function') {
-  (function () {
-    Object.assign = function (target) {
-      'use strict';
-      if (target === undefined || target === null) {
-        throw new TypeError('Cannot convert undefined or null to object');
-      }
-      var output = Object(target);
-      for (var index = 1; index < arguments.length; index++) {
-        var source = arguments[index];
-        if (source !== undefined && source !== null) {
-          for (var nextKey in source) {
-            if (source.hasOwnProperty(nextKey)) {
-              output[nextKey] = source[nextKey];
-            }
-          }
-        }
-      }
-      return output;
-    };
-  }());
-}
-polyfills_Objectassign = undefined;
 Motherboardjs = function (MElementMixin, AttrDef) {
   function M() {
   }
