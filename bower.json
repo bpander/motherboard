@@ -18,8 +18,8 @@
     "Gruntfile.js"
   ],
   "dependencies": {
-    "webcomponentsjs": "0.7.20",
-    "matchMedia": "matchmedia#0.3.0"
+    "matchMedia": "matchmedia#0.3.0",
+    "document-register-element": "0.5.4"
   },
   "devDependencies": {
     "requirejs": "2.1.22"

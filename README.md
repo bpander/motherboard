@@ -14,7 +14,7 @@ Motherboard is meant to be a foundation to build on. It doesn't force a specific
 
 ## Browser support
 
-Motherboard can be polyfilled to work back to IE9. Check the <a href="#polyfill-table">Polyfill Table</a> to see which polyfills to use for your project (if any).
+Motherboard can be polyfilled to work back to IE9 (and theoretically IE8). Check the <a href="#polyfill-table">Polyfill Table</a> to see which polyfills to use for your project (if any).
 
 ## Usage
 
@@ -323,10 +323,11 @@ var MAsyncMediator = M.element('m-async-mediator', function (proto, base) {
 
 Motherboard uses APIs that aren't implemented in older browsers. While it can be polyfilled to work in IE9, desired browser support varies on a project to project basis. Therefore, all polyfills are included in the bower install, but it's left to your discretion which ones to include (if any).
 
-|                                         | IE9       | IE10      | IE11      | Edge 20   | Safari 9  | Firefox 44    | Chrome 48   |
-| ---                                     | :---:     | :---:     | :---:     | :---:     | :---:     | :---:         | :---:       |
-| *webcomponentsjs/CustomElements.js      | Required  | Required  | Required  | Required  | Required  | Required      | -           |
-| *matchMedia/matchMedia.js               | Required  | -         | -         | -         | -         | -             | -           |
-| *matchMedia/matchMedia.addListener.js   | Required  | -         | -         | -         | -         | -             | -           |
+|                               | IE9       | IE10      | IE11      | Edge 20   | Safari 9  | Firefox 44    | Chrome 48   |
+| ---                           | :---:     | :---:     | :---:     | :---:     | :---:     | :---:         | :---:       |
+| *document-register-element    | Required  | Required  | Required  | Required  | Required  | Required      | -           |
+| polyfills/CustomEvent.js      | Required  | Required  | Required  | -         | -         | -             | -           |
+| *matchMedia.js                | Required  | -         | -         | -         | -         | -             | -           |
+| *matchMedia.addListener.js    | Required  | -         | -         | -         | -         | -             | -           |
 
-<small>* - These will download to the bower directory when installing Motherboard via bower.</small>
+<small>* - These will download in the bower directory when installing Motherboard via bower.</small>
